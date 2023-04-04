@@ -1,0 +1,297 @@
+main/webapp/action 내부
+====================================================
+ex01.jsp
+====================================================
+<%@ page contentType="text/html; charset=utf-8" %>
+<h1>Ex01.jsp</h1>
+
+<jsp:forward page="ex02.jsp" />
+
+<%--
+    response.sendRedirect("ex02.jsp");
+--%>
+====================================================
+ex02.jsp
+====================================================
+<%@ page contentType="text/html; charset=utf-8" %>
+<h1>Ex02.jsp</h1>
+=====================================================
+ex03.jsp
+=====================================================
+<%@ page contentType="text/html; charset=utf-8" %>
+<h1>ex03 상단</h1>
+
+<jsp:include page="ex02.jsp" />
+
+<h3>ex03 하단</h3>
+=====================================================
+ex04.jsp
+=====================================================
+<%@ page contentType="text/html; charset=utf-8" %>
+<h1>ex04.jsp</h1>
+
+<jsp:include page="ex05.jsp">
+    <jsp:param name="key1" value="value1" />
+    <jsp:param name="key2" value="value2" />
+</jsp:include>
+
+<h1>ex04.jsp 하단</h1>
+=====================================================
+ex05.jsp
+=====================================================
+<%@ page contentType="text/html; charset=utf-8" %>
+<h1>ex05.jsp</h1>
+
+<%
+    String value1 = request.getParameter("key1");
+    String value2 = request.getParameter("key2");
+
+    out.println("value1 = " + value1 + "<br>");
+    out.println("value2 = " + value2 + "<br>");
+%>
+=====================================================
+ex06.jsp
+=====================================================
+<%@ page contentType="text/html; charset=utf-8" %>
+<h1>ex06.jsp 상단</h1>
+<%
+    RequestDispatcher rd = request.getRequestDispatcher("ex07.jsp");
+    //rd.forward(request, response);
+    rd.include(request, response);
+%>
+<h1>ex06.jsp 하단</h1>
+=====================================================
+ex07.jsp
+=====================================================
+<%@ page contentType="text/html; charset=utf-8" %>
+<h1>ex07.jsp</h1>
+=====================================================
+ex08.jsp
+=====================================================
+<<%@ page contentType="text/html; charset=utf-8"%>
+<jsp:useBean id="list" class="java.util.ArrayList"/>
+<%
+    list.add("abc");
+    System.out.println(list);
+%>
+=====================================================
+ex09.jsp
+=====================================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%
+    request.setCharacterEncoding("UTF-8");
+%>
+
+<jsp:useBean id="member" class="models.Member" scope="request"/>
+<jsp:setProperty name="member" property="*"/>
+<jsp:setProperty name="member" property="userId" param="memberId"/>
+
+
+<%--
+<jsp:setProperty name="member" property="userId"/>
+<jsp:setProperty name="member" property="userPw"/>
+<jsp:setProperty name="member" property="userPwRe"/>
+<jsp:setProperty name="member" property="userNm"/>
+--%>
+
+<jsp:getProperty name="member" property="userId" /><br>
+<jsp:getProperty name="member" property="userPw" /><br>
+<jsp:getProperty name="member" property="userPwRe" /><br>
+<jsp:getProperty name="member" property="userNm" /><br>
+
+
+<%--
+    //자바 코드를 쓰는 것은 지양해야 한다.
+    member.setUserId("user01");
+    member.setUserPw("123456");
+    member.setUserPwRe("123456");
+    member.setUserNm("사용자01");
+    System.out.println(member);
+--%>
+
+<%--
+${pageScope.member.userId}<br>
+${member.userPw}<br>
+${member.userPwRe}<br>
+${member.userNm}<br>
+--%>
+
+=====================================================
+ex10.jsp
+=====================================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<form method="post" action="ex09.jsp">
+    아이디
+     <input type="text" name="memberId"><br>
+     비밀번호
+     <input type="password" name="userPw"><br>
+     비밀번호 확인
+     <input type="password" name="userPwRe"><br>
+     회원명
+     <input type="text" name="userNm"><br>
+    <button type="submit">가입하기</button>
+</form>
+=====================================================
+
+
+
+=====================================================
+jsp이지만 다른경로에 있는 부분
+=====================================================
+main/webapp/views/join.jsp
+=====================================================
+<%@ page contentType="text/html; charset=utf-8"%>
+회원가입 완료!!
+<br>
+<%--getter를 알아서 호출해 준다!--%>
+아이디 : ${member.userId}<br>
+비밀번호 : ${member.userPw}<br>
+=====================================================
+
+=====================================================
+main/webapp/EL/ex01.jsp
+=====================================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%
+    pageContext.setAttribute("num1", 10);
+    request.setAttribute("num2", 20);
+%>
+num1 : ${num1} <br>
+num2 : ${num2} <br>
+
+num1 + num2 : ${num1 + num2} <br>
+=====================================================
+main/webapp/EL/ex02.jsp
+=====================================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%
+    pageContext.setAttribute("num1", 100);
+    request.setAttribute("num1", 200);
+    application.setAttribute("num1", 300);
+%>
+<%--EL식 속성은 기본적으로 적용범위가 넓을수록 우선순위가 낮다.--%>
+num1 : ${num1}<br>
+pageScope.num1 : ${pageScope.num1}<br>
+requestScope.num1 : ${requestScope.num1}<br>
+applicationScope.num1 : ${applicationScope.num1}<br>
+=====================================================
+main/webapp/EL/ex03.jsp 유의사항. 페이지 주소에 객체를 집어 넣어줘야 한다. 
+								(예시)http://localhost:3000/day06/EL/ex03.jsp?num1=100&num2=200
+=====================================================
+<%@ page contentType="text/html; charset=utf-8"%>
+${param.num1} + ${param.num2} + ${param.num1 + param.num2}<br>
+=====================================================
+main/webapp/EL/ex04.jsp 
+=====================================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<form method="post" action="ex05.jsp">
+    취미
+    <input type="checkbox" name="hobby" value="야구">야구
+    <input type="checkbox" name="hobby" value="축구">축구
+    <input type="checkbox" name="hobby" value="농구">농구
+    <input type="checkbox" name="hobby" value="배구">배구
+    <br>
+    <button type="submit">
+	</button>
+</form>
+=====================================================
+main/webapp/EL/ex05.jsp 
+=====================================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%
+    request.setCharacterEncoding("UTF-8");
+%>
+${param.hobby}<br>
+${paramValues.hobby[0]}<br>
+${paramValues.hobby[1]}<br>
+${paramValues.hobby[2]}<br>
+${paramValues.hobby[3]}<br>
+
+${header.Host}<br>
+${header['Content-Type']}<br>
+${cookie.JSESSIONID.value}<br>
+
+request : ${pageContext.getRequest()}<br>
+request : ${pageContext.request}<br>
+=====================================================
+main/webapp/EL/ex06.jsp 유의사항. 페이지 주소에 객체를 집어 넣어줘야 한다. 
+								(예시)http://localhost:3000/day06/EL/ex06.jsp?num1=9
+=====================================================
+<%@ page contentType="text/html; charset=utf-8"%>
+${empty param.num1}
+<br>
+${param.num1 > 10 ? '10보다 크다' : '10보다 작다'}
+${param['num1'] > 10 ? '10보다 크다' : '10보다 작다'}
+=====================================================
+
+
+=====================================================
+jsp가 아닌 부분
+=====================================================
+main/java/controllers/MemberJoinController
+=====================================================
+package controllers;
+
+import models.Member;
+import models.MemberJoinService;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet("/member/join")
+public class MemberJoinController extends HttpServlet { //Controller
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //Model
+        MemberJoinService service = new MemberJoinService();
+        service.process(req);
+
+        Member member = new Member();
+        member.setUserId("user01");
+        member.setUserPw("123456");
+        
+        //getter는 알아서 호출된다.
+        req.setAttribute("member", member);
+
+        //View
+        RequestDispatcher rd = req.getRequestDispatcher("/views/join.jsp");
+        rd.forward(req, resp);
+
+
+    }
+}
+=====================================================
+main/java/models/MemberJoinService
+=====================================================
+package models;
+
+import javax.servlet.http.HttpServletRequest;
+
+public class MemberJoinService {
+    public void process(HttpServletRequest request) {
+        //요청 데이터를 가지고 검증, 가입처리, 완료...
+
+    }
+}
+=====================================================
+main/java/models/Member
+=====================================================
+package models;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter @Setter @ToString
+public class Member {
+    private String userId;
+    private String userPw;
+    private String userPwRe;
+    private String userNm;
+}
+=====================================================

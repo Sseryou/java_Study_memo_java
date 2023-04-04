@@ -1,0 +1,270 @@
+public class ex01 {
+    public static void main(String[] args) {
+        Date date = new Date();
+        System.out.println(date);
+
+
+        int year = date.getYear();
+        int month = date.getMonth(); //0~11 -> java.time 패키지에서는 1~12로 수정되어있다.
+        int day = date.getDay();
+
+        System.out.printf("year=%d, month=%d, day=%d\n",year, month, day);
+
+
+        int hours = date.getHours();
+        int minute = date.getMinutes();
+        int seconds = date.getSeconds();
+
+        System.out.printf("hours=%d, minute=%d, seconds=%d\n", hours,minute,seconds);
+
+    }
+}
+=======================================================
+public class ex02 {
+    public static void main(String[] args) {
+        Calendar cal = Calendar.getInstance();
+        //cal.set(YEAR, 2022); //날짜 변경
+        //cal.set(2023, 10, 1); //10 - 11월
+        //cal.set(2023,10,1,11,23,59);
+
+        //cal.add(DAY_OF_MONTH, 365); //양수 - 날짜, 시간 추가
+        //cal.add(DAY_OF_MONTH, -365); //음수 - 날짜, 시간 감소
+
+
+        int year = cal.get(YEAR);
+        int month = cal.get(MONTH) + 1; //0~11, 0 - 1 월, 11 - 12월.
+        int day = cal.get(DAY_OF_MONTH);
+
+        int hours = cal.get(HOUR_OF_DAY);
+        int minute = cal.get(MINUTE);
+        int second = cal.get(SECOND);
+
+
+
+        System.out.printf("year=%d, month=%d, day=%d, hours=%d, minute=%d, second=%d\n",year,month,day,hours,minute,second);
+    }
+}
+=====================================================
+public class ex03 {
+    public static void main(String[] args) {
+        Calendar cal = Calendar.getInstance();
+        //add는 다음 달로 넘어가는 것까지 구현, roll은 다음달로 넘어가지 않게 구현
+        //cal.add(Calendar.DAY_OF_MONTH, 40); //2023-5-12
+        //cal.roll(Calendar.DAY_OF_MONTH, 40); //2023-4-12
+
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+
+
+        System.out.printf("year=%d, month=%d, day=%d\n",year, month, day);
+    }
+}
+=====================================================
+public class ex01 {
+    public static void main(String[] args) {
+        LocalDate date = LocalDate.now(); //현재 시점의 날짜
+
+        System.out.println(date);
+
+        LocalDate date2 = LocalDate.of(2023, 4, 30);
+        System.out.println(date2);
+    }
+}
+=====================================================
+public class ex02 {
+    public static void main(String[] args) {
+        LocalDate date = LocalDate.now();
+
+
+        //int year = date.get(YEAR);
+        int year = date.getYear();
+
+        //int month = date.get(MONTH_OF_YEAR); //1~12
+        int month = date.getMonthValue();
+
+        //int day = date.get(DAY_OF_MONTH);
+        int day = date.getDayOfMonth();
+
+        //int week = date.get(DAY_OF_WEEK); //요일 1~7 1 - 월요일 7 - 일요일
+        int week = date.getDayOfWeek().getValue();
+
+        String[] weeks = {"월", "화", "수", "목", "금", "토", "일"};
+
+        System.out.printf("year=%d, month=%d, day=%d\n",year,month,day);
+        System.out.printf("week=%d, weekStr=%s\n", week, weeks[week-1]);
+    }
+}
+=====================================================
+public class ex03 {
+    public static void main(String[] args) {
+        LocalDate date = LocalDate.now();
+        //새로운 객체로 반환하기 때문에, 변수에 담아주어야 한다.
+        LocalDate date7days = date.plus(7, ChronoUnit.DAYS);
+
+        LocalDate date7daysBefore = date.minus(7, ChronoUnit.DAYS);
+
+        System.out.println("date = " + date);
+        System.out.println("7days = " + date7days);
+        System.out.println("-7days = " + date7daysBefore);
+    }
+}
+=====================================================
+public class ex04 {
+    public static void main(String[] args) {
+        LocalDate date =LocalDate.now();
+        //LocalDate lastYear = date.with(ChronoField.YEAR, 2022);
+        LocalDate lastYear = date.withYear(2022);
+
+        System.out.println("date= " + date);
+        System.out.println("lastYear =" + lastYear);
+    }
+}
+=====================================================
+public class ex05 {
+    public static void main(String[] args) {
+        LocalTime time = LocalTime.now();
+        System.out.println(time);
+    }
+}
+=====================================================
+public class ex06 {
+    public static void main(String[] args) {
+        LocalDateTime dateTime = LocalDateTime.now();
+        System.out.println("dateTime = " + dateTime);
+
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
+
+        LocalDateTime dateTime2 = LocalDateTime.of(date, time);
+        System.out.println("dateTime2 = " + dateTime2);
+
+        LocalDateTime dateTime3 = date.atTime(time);
+        System.out.println("dateTime3 = " + dateTime3);
+
+        LocalDateTime dateTime4 = time.atDate(date);
+        System.out.println("dateTime4 = " + dateTime4);
+
+
+    }
+}
+=====================================================
+public class ex07 {
+    public static void main(String[] args) {
+        ZonedDateTime zonedDateTime1 = ZonedDateTime.now();
+        System.out.println("zonedDateTime1 = " + zonedDateTime1);
+
+        LocalDateTime dateTime = LocalDateTime.now();
+        ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        ZonedDateTime zonedDateTime2 = ZonedDateTime.of(dateTime, seoulZone);
+        System.out.println("zoneDateTime2 = " + zonedDateTime2);
+
+        ZonedDateTime zonedDateTime3 = dateTime.atZone(seoulZone);
+        System.out.println("zoneDateTime3 = " + zonedDateTime3);
+    }
+}
+=====================================================
+public class ex08 {
+    public static void main(String[] args) {
+        OffsetDateTime offsetDateTime1 = OffsetDateTime.now();
+        System.out.println("offsetDateTime1 = " + offsetDateTime1);
+
+        LocalDateTime dateTime = LocalDateTime.now();
+        ZoneOffset offset = ZoneOffset.of("+9");
+
+        OffsetDateTime offsetDateTime2 = dateTime.atOffset(offset);
+        System.out.println("offsetDateTime2 = " + offsetDateTime2);
+    }
+}
+=====================================================
+public class ex09 {
+    public static void main(String[] args) {
+        Instant instant1 = Instant.now();
+
+        System.out.println("instant1 = " + instant1);
+
+        long time = instant1.getEpochSecond();
+        System.out.println(time);
+    }
+}
+=====================================================
+public class ex01 {
+    public static void main(String[] args){
+        LocalDate date1 = LocalDate.now();
+        //120주를 더한다.
+        LocalDate date2 = date1.plusWeeks(120);
+
+        Period period = Period.between(date1, date2);
+
+        System.out.println(period);
+        //P2Y3M18D,  2년 3개월 18일 차이.
+
+        int years = period.getYears();
+        int months = period.getMonths();
+        int days = period.getDays();
+
+        int totalMonths = years * 12 + months;
+        if(days > 0) totalMonths ++;
+
+        System.out.println(totalMonths);
+    }
+}
+
+=====================================================
+public class ex02 {
+    public static void main(String[] args) {
+
+        LocalTime time1 = LocalTime.now();
+        LocalTime time2 = time1.plusSeconds(360000);
+        Duration du = Duration.between(time1, time2);
+
+        System.out.println(du);
+
+        long seconds = du.getSeconds();
+        //System.out.println(seconds);
+
+        //오늘 날짜 자정 + 경과 초
+        LocalDateTime dateTime = LocalDateTime.of(LocalDate.now(),LocalTime.of(0,0,0));
+
+        LocalDateTime dateTime2 = dateTime.plusSeconds(seconds);
+        System.out.println(dateTime2);
+
+        int hour = dateTime2.getHour();
+        int minute = dateTime2.getMinute();
+        int secs = dateTime2.getSecond();
+
+        System.out.printf("시간 차이 : %d시간 %d분 %d초\n", hour, minute, secs);
+
+
+
+    }
+}
+
+=====================================================
+public class ex03 {
+    public static void main(String[] args) {
+        LocalDateTime dateTime = LocalDateTime.now();
+
+        String pattern = "yyyy.mm.dd HH:MM:ss.SSS E";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        String dateStr = formatter.format(dateTime);
+        System.out.println(dateStr);
+    }
+}
+=====================================================
+public class ex04 {
+    public static void main(String[] args) {
+        String date = "2021/03/21 23:59:59";
+        String pattern = "yyyy/MM/dd HH:mm:ss";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+
+        LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
+
+        System.out.println(dateTime);
+
+    }
+}
+=====================================================
+=====================================================
+=====================================================

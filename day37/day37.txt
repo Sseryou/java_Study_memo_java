@@ -1,0 +1,108 @@
+
+
+커스텀 액션
+커스텀 액션을 만드는 방법
+1. 태그 파일
+.tag
+@tag : @page 비슷, 정의 속성도 매우비슷
+	body-content
+		- 단일 태그 <태그명/> : empty
+		- 내용물이 있는 태그 <태그명> ~ </태그명>
+			- scriptless : - 스크립틀릿 코드를 제외한 (자바코드)
+							- EL식, HTML 사용
+							
+			-tagdependent
+							- 스크립틀릿 , EL식 제외한 내용
+							
+	trimDirectiveWhitespaces : 공백제거
+	<jsp:doBody /> : 태그 안쪽에 입력된 컨텐츠
+	
+	-rtexprvalue - true : - EL 식 변수 허용 (기본값)
+					- false : - EL 식 변수 허용 X
+										(직접 입력 정수, 문자 ...)
+	
+	
+@include
+@attribute
+	- name="속성명"
+	- 속성명 - 자바 변수
+				- EL 속성
+	
+	- type
+		- java.lang.String : 기본값
+		- java.lang.Integer : 정수 (기본형 X, 래퍼 클래스)
+		- java.lang.Long
+		- java.lang.Double : 실수
+		
+	- required
+		- false : 필수 항목 X
+		- true : 필수 항목 O
+		
+	- dynamic-attributes
+		:속성명을 지정하지 않고 사용
+		-> Map 형태
+		-> EL식 -> 마침표 (.), []
+		-> 모든 속성의 자료형이 String
+		-> 자바 코드(Map)
+			->속성값을 가져와야 가능
+			-> pageContext -> jspContext
+		
+		-> required 속성 설정 불가
+	
+@variable
+	- name-given : 변수로 사용할 속성명
+	- variable-class="자료형" : 기본값은 java.lang.String
+	- scope
+			: AT_BEGIN : 태그 위쪽
+			: AT_END : 태그 닫힌 바로 아래쪽
+			: NESTED : 태그 안쪽
+	
+	
+	-name-from-attribute : 변수로 사용될 항목을 직접 지정
+	
+	
+@taglib
+
+tag 파일 -> 번역
+내장 객체
+HttpServletRequest request
+HttpServletResponse response
+JspWriter out
+HttpSession session
+ServletConfig config
+ServletContext application
+jspContext
+
+참고) pageContext
+
+
+2. 태그 클래스
+SimpleTag 인터페이스
+SimpleTagSupport
+
+태그 파일을 이용해서 커스텀 액션 만들기
+1. 태그 파일에서만 사용할 수 있는 지시어
+2. 한글을 포함하는 태그 파일
+3. 애트리뷰트를 지원하는 태그 파일
+
+태그 파일의 내장 변수
+
+동적 애트리뷰트를 지원하는 태그 파일
+1. dynamic-attributes
+
+커스텀 액션의 본체를 처리하는 태그 파일에서만
+
+변수를 지원하는 커스텀 액션
+
+<jsp:doBody />
+	JspFragment
+		:invoke(null -> JspWriter)-
+		
+커스텀 레이아웃 구성
+
+<jsp:attribute name="footer">
+어트리뷰트는 항상 어트리뷰트를 쓰지 않은 속성보다 위에 위치해야 한다.
+그렇지 않으면, 컴파일 오류가 발생한다.
+
+
+

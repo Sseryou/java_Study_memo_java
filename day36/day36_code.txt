@@ -1,0 +1,300 @@
+main/webapp/jstl
+=============================================
+ex01
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="num1" value="100" scope="request"/>
+<c:set var="num2" value="200" />
+num1 : ${requestScope.num1}<br>
+num2 : ${pageScope.num2}<br>
+num1 + num2 = ${num1 + num2}<br>
+=============================================
+ex02
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%
+    pageContext.setAttribute("num1", 100);
+    request.setAttribute("num1", 200);
+    application.setAttribute("num1", 300);
+%>
+<c:remove var="num1" />
+pageScope : ${pageScope.num1}<br>
+requestScope : ${requestScope.num1}<br>
+applicationScope : ${applicationScope.num1}<br>
+=============================================
+ex03
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:set var="num1" value="300"/>
+<c:set var="num2" value="200"/>
+<c:if test="${num2 > num1}">
+    num2가 더 큽니다.
+</c:if>
+<c:if test="${num1 >= num2}">
+    num1이 num2보다 크거나 같다.
+</c:if>
+${num2 > num1 ? "num2가 더 큽니다." : "num1이 num2보다 크거나 같다"}
+=============================================
+ex04
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:set var="age" value="18" />
+<c:choose>
+    <c:when test="${age < 8}">
+        유치원생!
+    </c:when>
+    <c:when test="${age < 14}">
+            초등학생!
+    </c:when>
+    <c:when test="${age < 17}">
+            중학생!
+    </c:when>
+    <c:when test="${age < 20}">
+            고등학생!
+    </c:when>
+    <c:otherwise>
+        성인!
+    </c:otherwise>
+</c:choose>
+=============================================
+ex05
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.util.*, models.Member"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:forEach var="i" begin="1" end="10" step="2">
+    <h1>${i}<h1>
+</c:forEach>
+
+<%
+    List<Member> members = new ArrayList<>();
+    for(int i = 0; i <= 10; i++){
+        members.add(new Member("userId"+i, "123456", "사용자"+i));
+    }
+    pageContext.setAttribute("members", members);
+%>
+
+<table border='1'>
+<thead>
+    <tr>
+        <th>순번</th>
+        <th>아이디</th>
+        <th>비밀번호</th>
+        <th>회원명</th>
+     </tr>
+</thead>
+<tbody>
+    <c:forEach var="member" items="${members}" varStatus="status">
+       <%-- member == ${status.current} --%>
+        <tr>
+            <td>${status.count}</td>
+            <td>${member.userId}</td>
+            <td>${member.userPw}</td>
+            <td>${member.userNm}</td>
+        </tr>
+    </c:forEach>
+</tbody>
+</table>
+=============================================
+ex06
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:redirect url="https://www.naver.com"/>
+=============================================
+ex07
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:set var="html" value="<h1>제목!</h1>" />
+<c:out value="${html}" escapeXml="false"/>
+<a href="<c:url value='/jstl/ex04.jsp'/>" />ex04 이동</a>
+=============================================
+ex08
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+=============================================
+ex09
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<h1>ex09.jsp<h1>
+<c:import var="naverHTML" url="https://www.naver.com"/>
+
+${naverHTML}
+=============================================
+ex10
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.util.*"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<% Date date = new Date(); %>
+<c:set var="date" value="<%=date%>"/>
+<fmt:formatDate value="${date}" type="time"/>
+<br>
+<fmt:formatDate value="${date}" type="both"/>
+<br>
+<fmt:formatDate value="${date}" type="both" dateStyle="short" timeStyle="short"/>
+<br>
+<fmt:formatDate value="${date}" type="both" dateStyle="medium" timeStyle="medium"/>
+<br>
+<fmt:formatDate value="${date}" type="both" dateStyle="long" timeStyle="long"/>
+<br>
+<fmt:formatDate value="${date}" type="both" dateStyle="full" timeStyle="full"/>
+<br>
+<fmt:formatDate value="${date}" pattern="yyyy.MM.dd HH:mm" />
+=============================================
+ex11
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<fmt:formatNumber value="100000000" groupingUsed="false"/>
+<br>
+<fmt:formatNumber value="10.12" pattern="#.####"/>
+<br>
+<fmt:formatNumber value="10.12" pattern="0.0000"/>
+<br>
+<fmt:formatNumber value="1000000000" pattern="#,###"/>
+<br>
+<fmt:formatNumber value="0.2" type="percent"/>
+<br>
+<fmt:formatNumber value="10000" type="currency"/>
+=============================================
+ex12
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<fmt:setLocale value="ko_kr"/>
+<fmt:formatNumber value="10000000" type="currency" /><br>
+
+<fmt:setLocale value="en_us" />
+<fmt:formatNumber value="10000000" type="currency" /><br>
+=============================================
+ex13
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.util.*"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%
+    Date date = new Date();
+%>
+<c:set var="date" value="<%=date%>" />
+<fmt:timeZone value="America/New_York">
+    뉴욕 : <fmt:formatDate value="${date}" type="both"/>
+</fmt:timeZone>
+<br>
+<fmt:setTimeZone value="Asia/Sydney"/>
+시드니 : <fmt:formatDate value="${date}" type="both"/>
+=============================================
+ex14
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<form method="post" action="ex14_ps.jsp">
+    이름 : <input type="text" name="name">
+    <button type="submit">전송</button>
+</form>
+=============================================
+ex14_ps
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<%--
+    request.setCharacterEncoding("UTF-8");
+--%>
+
+<fmt:requestEncoding value="UTF-8"/>
+
+${param.name}
+=============================================
+ex14_ps
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<%--
+    request.setCharacterEncoding("UTF-8");
+--%>
+
+<fmt:requestEncoding value="UTF-8"/>
+
+${param.name}
+=============================================
+ex15
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%-- 나중에 다시 확인 --%>
+<fmt:setLocale value="ko"/>
+<fmt:setBundle basename="messages.commons"/>
+<fmt:message key="userId" />
+=============================================
+ex16
+=============================================
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+
+<%
+    String[] names = {"이름1", "이름2", "이름3"};
+    pageContext.setAttribute("names", names);
+%>
+${fn:toUpperCase("abc")}
+
+<c:forEach var="item" items="${fn:split('apple,orange,banana', ',')}">
+    ${item}<br>
+</c:forEach>
+<br>
+${fn:join(names, ",")}
+=============================================
+
+
+
+=============================================
+다른 경로
+=============================================
+main/java/models
+=============================================
+Member
+=============================================
+package models;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@ToString @Getter @Setter @AllArgsConstructor
+public class Member {
+    private String userId;
+    private String userPw;
+    private String userNm;
+}
+=============================================
+main/resources/messages/
+=============================================
+commons.properties
+=============================================
+userId=아이디
+email=이메일
+=============================================
+=============================================

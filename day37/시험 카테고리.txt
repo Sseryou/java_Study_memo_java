@@ -1,0 +1,8 @@
+회원가입, 로그인
+- TDD 설계 -> 구현
+- 객체 지향 설계(의존 ...)
+		- 스프링에서 활용
+- JSP
+
+회원가입 시스템 참고
+https://github.com/yonggyo1125/Board_JSP

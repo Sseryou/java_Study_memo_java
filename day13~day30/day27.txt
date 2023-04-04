@@ -1,0 +1,314 @@
+컬렉션 프레임워크
+
+static <T> void ....   .sort = 정렬한다.
+
+Arrays
+	List asList(T...)
+
+	List<Integer> nums1 = Arrays.asList(1,2,3,4);
+        List<Integer> nums2 = Arrays.asList(5,6,7,8);
+        boolean result1 = Collections.disjoint(nums1, nums2); //중복이 있으면 false를 반환한다.
+        System.out.printf("result=%s%n", result1);
+
+        Collections.fill(nums1, 0); //기존 리스트에 지정한 값을 채워 넣는다. 결과 [0,0,0,0]
+        System.out.println(nums1);
+
+        Enumeration<Integer> enu = Collections.enumeration(nums2); //enu에 Enumeration 형식으로 저장
+        List<Integer> nums3 = Collections.list(enu); // nums3(List)에 enu를 저장
+        System.out.println(nums3); //출력
+
+
+	List<String> alpha = Arrays.asList("A","A","B","C");
+        int cnt = Collections.frequency(alpha, "A"); //지정한 값이 몇번 나타나는지 출력
+        System.out.println(cnt);
+
+
+ List<String> alpha = Arrays.asList("A","A","B","C");
+        int cnt = Collections.frequency(alpha, "A"); //지정한 값이 몇번 나타나는지 출력
+        System.out.println(cnt);
+
+        boolean result1 = Collections.replaceAll(alpha, "A", "AA");
+        //선택한 배열에서 특정 값을 특정 값으로 바꿈
+        System.out.println(alpha);
+
+        Collections.reverse(alpha); //값 배열을 거꾸로 바꾼다.
+        System.out.println(alpha);
+
+        Collections.rotate(alpha, 2); //값 배열을 특정 값(int)만큼 이동시킨다.
+        System.out.println(alpha);
+
+        Collections.rotate(alpha, 1); //값 배열을 특정 값(int)만큼 이동시킨다.
+        System.out.println(alpha);
+
+        List<Integer> nums = Arrays.asList(1,2,3,4,5,6,7,8);
+        Collections.shuffle(nums); //배열을 무작위로 섞는다.
+        System.out.println(nums);
+
+
+배열 내부 확인 : toString
+
+	 String[] strs1 = {"A", "B", "C"};
+        String[] strs2 = {"A", "B", "C"};
+        boolean result = Arrays.deepEquals(strs1, strs2); //내부 값까지 모두 일치하면 true
+        System.out.println(result);
+
+        int result2 = Arrays.mismatch(strs1, strs2); //일치하지 않는 값이 있는지 확인한다. 없으면 -1
+        //있으면 그 배열 내부의 값의 index위치를 반환한다.
+        System.out.println(result2);
+
+
+
+람다식(Lamda expression)
+1.람다식이란?
+
+함수를 하나의 식으로 표현
+
+함수형 프로그래밍
+함수
+	- 하나의 기능
+
+함수는 값
+	- 매개변수로 사용 가능
+	- 반환값으로 사용 가능
+
+인터페이스 -> 지역 내부 클래스 객체 생성
+	-> 추상 메서드를 하나만 정의
+
+인터페이스 -> 객체
+	- 상황 : 지역(함수), 멤버 변수
+	- 미구현된 메서드를 재정의
+
+람다를 활용하기 위해서는
+우선 인터페이스로 추상 메서드를 "하나만" 만들어야 한다.
+그 다음 람다식을 사용할 클래스의 "지역 내부" 에서 사용한다.
+
+
+일반적인 식
+ Calculator cal = new Calculator() {
+            @Override
+            public int add(int num1, int num2) {
+                return num1 + num2;
+            }
+        };
+        int result = cal.add(10, 20);
+        System.out.println(result);
+    }
+
+람다식
+
+Calculator cal2 = (int num1, int num2) -> {
+            return num1 + num2;
+        };
+
+람다식(자료형도 생략)
+
+ Calculator cal2 = (num1, num2) -> {
+            return num1 + num2;
+        };
+
+람다식(중괄호도 생략, 중괄호 생략시 return도 생략)
+Calculator cal2 = (num1, num2) -> num1 + num2;
+
+람다식 완성
+Calculator cal2 = (a, b) -> a + b;
+
+위의 식과 똑같이 완성
+Calculator cal2 = (a, b) -> a + b;
+        int result2 = cal2.add(20, 30);
+        System.out.println(result2);
+
+
+
+@FunctionalInterface
+public interface MyLamda {
+    void print(String str);
+}
+
+ public static void main(String[] args) {
+        MyLamda my = s -> System.out.println(s);
+        my.print("A");
+        MyLamda my2 = System.out::println;
+        //my.print("A");
+    }
+
+
+ public static void main(String[] args) {
+        //Calculator cal = (a,b) -> a+b;
+        //int result = add(cal, 10, 20);
+
+        int result = add((a,b) -> a+b, 10, 20); //함수 내부에서 구현 즉시 사용
+        System.out.println(result);
+    }
+    public static int add(Calculator cal, int num1, int num2){
+        int result = cal.add(num1, num2);
+        return result;
+    }
+
+
+
+public class Ex04 {
+    public static void main(String[] args) {
+        Calculator cal = getCalculator();
+        int result = cal.add(10, 20);
+        System.out.println(result);
+    }
+
+    public static Calculator getCalculator(){
+//        Calculator cal = (a,b) -> a+b;
+//        return cal;
+        return (a,b) -> a + b;
+
+    }
+}
+
+
+
+매개변수 사용하지 않을 시 괄호() 필요
+
+2. 람다식 문법 살펴보기
+
+3. 람다식 사용하기
+
+4. 함수형 인터페이스(Functional Interface)
+
+람다식으로 사용할 인터페이스에 달아준다.
+@FunctionalInterface
+	-인터페이스에 하나의 추상 메서드만 허용
+
+@FunctionalInterface
+public interface Calculator {
+    int add(int num1, int num2);
+}
+
+java.util.function 패키지
+
+암기해야 할 것
+
+1) 매개변수 X, 반환값 O
+	Supplier<T>
+		:T get()
+2) 매개변수 1, 반환값 X
+	Consumer<T>
+		:void accept(T t)
+3) 매개변수 1, 반환값 1
+	Function<T, R>
+		R apply(T t)
+4) 매개변수 1, 반환값 boolean
+	Predicate<T>
+		boolean test(T t)
+
+
+매개변수가 2 -> Bi
+1) 매개변수 2 , 반환값 X
+	BiConsumer<T, U>
+		void accept(T t, U u)
+
+2) 매개변수 2, 반환값 O
+	BiFunction<T, U, R>
+		R apply(T t, U u)
+
+3) 매개변수 2, 반환값 boolean
+	BiPredicate<T, U>
+		boolean test(T t, U u)
+
+매개변수와 반환값이 같은 경우
+1) 매개변수 1
+	UnaryOperator<T> : Function<T, T>
+	T apply(T, t)
+
+2) 매개변수 2
+	BinaryOperator<T> : Function<T,T,T>
+	T apply(T t1, T t2)
+
+
+6. 기본형 사용하는 함수형 인터페이스
+	
+
+       //BiFunction<Integer, Integer, Integer> cal = (a, b) -> a + b;
+//       BinaryOperator<Integer> cal = (a,b) -> a+b; //박싱, 언박싱이 발생, 성능 좋지 않음
+//        int result = cal.apply(10, 20);
+
+        IntBinaryOperator cal = (a,b) -> a+b; //입력, 반환값이 모두 int이기 때문에 박싱, 언박싱이 발생하지 않음.
+        int result = cal.applyAsInt(10, 20);
+            System.out.println(result);
+
+7. Function의 합성과 Predicate의 결합
+
+Function
+	andThen
+	compose
+
+
+	Function<String, String> func1 = s -> s.toUpperCase(); //대문자로 만든다.
+        Function<String, String> func2 = s -> s.substring(1); //n+1번째 문자부터 출력한다.
+
+        String str = func1.apply("abcdefg");
+        String str2 = func2.apply("abcdefg");
+
+        Function<String, String> func3 = func1.andThen(func2); //두 Function의 합성 (앞에서 뒤로)
+        String str3 = func3.apply("abcdefg");
+        System.out.println(str3);
+
+        Function<String, String> func4 = func2.compose(func1); //뒤에서 앞으로 결합
+        String str4 = func4.apply("abcdefg");
+        System.out.println(str4);
+
+
+
+
+	identity : 항등 함수 -> x -> x (값을 그대로 반환)
+
+Predicate
+	- 논리 연산자 대신하는 메서드
+	- and
+	- or
+	- negate(부정 연산)
+
+
+  IntPredicate conds1 = n -> n >= 10;
+        IntPredicate conds2 = n -> n <= 100;
+        IntPredicate conds3 = conds1.and(conds2); // n >= 10 && n <= 100
+	IntPredicate conds4 = conds1.negate(); // n < 10
+
+        boolean result = conds3.test(120); //false
+        System.out.println(result);
+
+	boolean result2 = conds4.test(5);
+        System.out.println(result2); //true
+
+
+
+8. 메서드 참조
+- 충분히 예상 가능한 형태 -> 축약
+클래스명 :: 메서드명
+객체참조변수 :: 메서드명
+
+
+
+
+	//IntFunction<int[]> func3 = i -> new int[i];
+        IntFunction<int[]> func3 = int[]::new;
+        int[] nums = func3.apply(10);
+
+        System.out.println(Arrays.toString(nums));
+
+
+
+
+스트림(Stream)
+1. 스트림이란?
+java.util.stream 패키지
+
+1) 처리의 통일성
+2) 재사용성, 효율성
+
+3) 원본소스 변경X
+4) 일회용
+5) 내부 반복 처리
+
+1.5 스트림 객체
+배열 Arrays.stream(자료형)
+컬렉션 Collection::stream()
+
+	
+	

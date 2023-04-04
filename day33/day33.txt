@@ -1,0 +1,99 @@
+서블릿 (Servlet)
+- 자바의 웹 기술
+
+
+	메이븐을 사용시 별도의 설정이 필요
+
+
+maven
+		각각 첫번째 있는거 다운로드
+	javax.servlet-api : https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+
+	javax.servlet-jsp.api
+
+	->Tomcat 서버에 내장
+	-> 배포시에는 필요 x, 개발시에만 필요 O
+
+
+<scope>provided</scope>가 붙어 있으면 개발 시에만 사용되고, 배포시 제거된다.
+
+<scope>의 값
+complied - 기본값 : 배포시에 포함
+runtime
+provided : 배포시에는 제외
+	-> servlet-api, servlet.jsp-api 
+	-> 플랫폼(tomcat) 에 이미 내장
+test : 테스트시에만 필요한 라이브러리
+
+
+HttpServletRequest
+	-요청과 관련된 정보, 기능
+HttpServletResponse
+	-응답과 관련된 정보, 기능
+
+<url-pattern>/hello/*</url-pattern>
+
+*
+
+서블릿 3.0
+@WebServlet("경로")
+
+웹서버 - 동시에 여러 접속이 이뤄지고 동일한 서블릿을 여러 쓰레드가 사용
+-> 동시성문제 발생
+-> 서블릿에서는 인스턴스 변수 사용 자제
+
+서블릿 객체 생성 -> init() -> 요청 처리 메서드(doGet, doPost ...) -> destroy()
+
+init() -> 요청 처리전 초기화(설정 처리...)
+destroy() -> 요청 처리 후 처리할 작업(자원 정리....)
+
+
+요청과 응답에 대한 개념이 필요하다
+
+Generate -> Override Method에서 생성
+
+
+
+혹시나 예제를 보고싶으면, tomcat을 깔아둔 폴더 내부에 example이 있다.
+그곳을 확인하면 된다.
+예) WEB-INF -> web.xml
+
+기능을 전부 다 암기하기 어려우므로 api문서를 자주 활용할 것을 권장한다.
+메뉴얼을 보고, 참고해서 하는 것이 좋다.
+
+
+쿠키 : 
+헤더를 통해 브라우저가 보내줘야지만 알 수 있다.
+
+상단에,
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+  version="4.0"
+  metadata-complete="true">
+가 들어가야 한다. 그래야 서블릿을 인식하게 된다.
+
+index.jsp가 있으면 index.jsp를 먼저 인식하게 된다.
+
+
+
+
+1. HTTPServlet : 추상클래스
+		-> 이 클래스를 상속 받으면 서블릿 클래스가 된다.
+
+->web.xml : 설정
+<?xml version="1.0" encoding="utf-8"?>
+xml -> 마크업 언어 일종, 태그 형태로
+-> xml -> 설정
+
+/webapp/WEB-INF/web.xml
+
+
+2. Filter
+
+
+
+JSP의 특징
+1.JSP의 페이지 처리과정
+

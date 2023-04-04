@@ -1,0 +1,275 @@
+예외처리
+
+
+
+	Throwable
+Error		Exception
+
+
+Exception
+	- 컴파일 시 체크되는 예외
+	- 예외 발생시 컴파일 X
+	- 엄격한 예외
+	- 예외가 발생하든 안하든 예외 처리
+
+
+Exception
+	RuntimeException	
+	- 실행중 체크되는 예외
+	- 컴파일은 된다.(실행을 하려면 클래스가 필요하기 때문)
+	- 유연한 예외
+
+1. 예외 처리하기
+1)try ~ catch문
+
+
+try{
+//예외가 발생할 가능성이 있는 코드
+//예외가 발생 -> throw 예외객체
+} catch (예외 객체){
+// 예외가 발생하면 유입되는 영역
+}
+
+
+getMessage(), printStackTrace()
+
+
+2)try - catch - finally문
+
+finally -> 예외가 발생하든 안하든 항상 실행되는 영역
+
+예) 실행 로그
+
+
+
+3) try -with - resource문(1.7)
+
+try(해제될 자원; 해제될 자원){
+
+} catch() {
+
+}
+
+AutoCloseable 인터페이스를 구현해도 된다.
+
+
+
+
+
+2.예외 처리 미루기
+3. 다중 예외 처리
+IOException
+NullPointerException
+
+catch 구간 -> 여러개 정의
+
+
+try{
+                fis.close();
+                //throw new Null...
+                //throw new IOExce....
+
+            } catch (IOException ee){
+                //ee.printStackTrace();
+                System.out.println("IOException");
+            } catch (NullPointerException ee){
+                System.out.println(("NullPointerException"));
+            } catch (Exception ee){ //예외가 발생하기는 하나, 뭔지 모를 때(제일 넓은 범위의 오류처리이므로 맨 아래 배치)
+                System.out.println("Exception");
+            }
+
+throw를 하게 되면 catch가 없는 한, 프로그램이 실행되지 않고 종료된다.
+
+
+catch (예외클래스 | 예외클래스 e)
+
+ try{
+                fis.close();
+                //throw new Null...
+                //throw new IOExce....
+
+            } catch (IOException | NullPointerException ee){
+                //ee.printStackTrace();
+            }
+
+
+예외를 예외를 발생시킨 쪽이 아닌 호출시킨 쪽이 처리하게 되는것을 예외 전가라고 한다.
+throw를 이용하여 예외를 발생시킴 -> 다른 메서드 안의 try~ catch 구문 안에 그 메서드를 호출
+
+
+public static void main(String[] args) {
+        //회원 가입
+        try{
+            checkMobile();
+        }catch (Exception e){
+            System.out.println("회원가입 상황에 맞는 예외처리");
+        }
+
+
+        //주문
+        try{
+            checkMobile();
+        }catch (Exception e){
+            System.out.println("주문상황에 맞는 예외처리");
+        }
+
+    }
+
+    public static void checkMobile() throws Exception{
+        //처리로직...
+        boolean result = true;
+
+        if(result){
+            throw new Exception("형식이 맞지 않습니다!");
+        }
+
+
+    }
+
+
+
+4. 사용자 정의 예외
+
+1) Exception 상속받기
+
+생성자 재정의, throw 활용
+
+2) 기본 생성자 오버라이딩 하기
+기본 생성자 안에 매개변수를 넣고, super(매개변수); 넣기
+
+3) 오류를 처리할 메서드 만들기
+
+4) 클래스 만들어서 처리하기
+
+
+public class IdIncorrectException extends Exception{
+    public IdIncorrectException(String message){
+        //super();
+        super(message);
+    }
+}
+
+public class PwIncorrectException extends Exception{
+    public PwIncorrectException(String message){
+        //super();
+        super(message);
+    }
+}
+
+public class MemberLoginService {
+    public void login(String id, String pw) throws IdIncorrectException, PwIncorrectException{
+        //user01, 123456;
+        if(id == null || !id.equals("user01")){ //id가 null 이거나 또는 user01이 아닌경우
+            throw new IdIncorrectException("아이디가 일치하지 않습니다.");
+        }
+        if(pw == null || !pw.equals("123456")){ //pw가 null 이거나 또는 123456이 아닌경우
+            throw new PwIncorrectException("비밀번호가 일치하지 않습니다.");
+        }
+    }
+}
+
+   public static void main(String[] args) {
+        MemberLoginService service = new MemberLoginService();
+        try{
+            service.login("user02", "1234");
+        } catch (IdIncorrectException e){
+            System.out.println(e.getMessage());
+        } catch (PwIncorrectException e){
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
+만약, 상속받은 Exception을 RuntimeException으로 바꾸게 된다면,
+좀 더 유연하게 코드를 짤 수 있다.
+상당히 많은 부분 생략 가능
+
+
+상황에 따라 맞게, 유용하게 사용 가능
+
+인텔리j에서 컨트롤 좌클로 함수 정의 확인가능
+ Object //컨트롤 + 마우스 왼쪽버튼
+
+
+
+
+컴파일러가 자동 추가
+1. import java.lang.*;
+2. extends Object
+3. 기본 생성자 (생성자 메서드가 정의 X)
+4. super() : 생성자 메서드의 첫번째 라인
+5. 인터페이스
+	-public abstract 추상 메서드
+	-public static final 정적상수
+6. 지역 내부클래스
+	지역 내부의 객체의 메서드가 사용중이면
+	-> 상수화
+	final
+
+
+
+java.lang 패키지 - 많이 쓰는 메서드 포함, 컴파일러가 자동추가
+(import java.lang.*;)
+
+String
+Exception
+
+Integer
+Long
+
+
+Object 클래스 - 모든 클래스의 최상위 클래스, 컴파일러가 자동 추가(상속)
+1. toString() 메서드
+	getClass().getName() + "@" + Integer.toHexString(hashCode());
+
+
+
+	Object
+	Class getClass() : 생성되어 있는 Class 객체 반환
+	Class 클래스 - 클래스의 정보 : 메서드, 생성자, 멤버변수 ....
+
+	패키지명.클래스명@16진수로 변환된 객체의 주소
+	//객체의 참조 변수를 출력했을 때 toString() 메서드가 자동 호출
+	exam03.Student@27d6c5e0
+
+
+	-주로 재정의를 통해서 멤버 변수 값을 확인하는 용도
+
+
+2. equls() 메서드 : Object equals : 동일성 비교 (주소)
+	 public boolean equals(Object obj) {
+        	return (this == obj);
+    	}
+
+	동일성(주소, 물리적 일치성)
+	(==)
+
+	동등성(값, 논리적 일치성)
+	
+
+
+3. hashCode() 메서드
+	-기본 정의 : 인스턴스의 주소
+
+
+String 클래스
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

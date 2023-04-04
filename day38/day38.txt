@@ -1,0 +1,96 @@
+쿠키
+
+
+
+세션
+
+1. 세션이란?
+개인화된 서비스 저장 정보
+-> 서버 저장
+-> 요청시마다 전송 X
+
+JSESSIONID 쿠키 - 브라우저별로 구분되는 값
+-> 요청시 브라우저 -> 서버 -> 세션 저장소에서 개인별 데이터를 조회
+
+HttpSession
+	void setAttribute(String name, Object value)
+	Object getAttribute(String name)
+	void removeAttribute(String name)
+	
+-> EL식 변수로 사용 가능
+
+2. session 내장객체의 메서드 종류
+3. 세션 생성
+4. 세션 정보
+5. 세션 삭제
+	- invalidate() : 세션 비우기(예 - 로그아웃)
+
+6. 세션 유효 시간 설정
+	- setMaxInactiveInterval
+		-> 기본값이 20분
+		-> 설정을 통해서 변경
+		
+세션 객체를 조회
+-> HttpServletRequest request
+			HttpSession getSession()
+			
+-> PageContext pageContext
+			HttpSession getSession()
+			
+-> jsp 페이지는 내장객체로 session
+
+
+자바에서 웹기술
+	
+javax.servlet-api
+javax.servlet-jsp.api
+jstl 1.2
+
+junit5
+mockito
+
+API(application Programming Interface)
+
+jdbc api
+
+
+회원가입
+1) 회원 가입 페이지 - 회원가입 양식 (view)
+	- GET /member/join
+
+2) 회원가입 처리
+	- POST /member/join
+	
+로그인
+1) 로그인 페이지 - 로그인 양식 (view)
+	- GET /member/login
+
+2) 로그인 처리
+	- POST /member/login
+
+
+필터
+- 요청 처리시 한글 깨짐
+- HttpServletRequestWrapper
+
+
+필터 -> 공통기능
+
+양식에 대한 구성
+
+레이아웃
+
+회원가입 양식
+
+로그인 양식
+
+
+models.member
+	JoinService
+	
+	Member : DTO(Data Transfer Object)
+
+
+
+
+

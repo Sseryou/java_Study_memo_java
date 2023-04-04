@@ -1,0 +1,138 @@
+서블릿(Servlet)
+2. Filter 인터페이스
+	-공통 실행 부분
+		
+Filter를 implement할때, servlet과 연관된 Filter를 불러와야 한다.
+
+doFilter를 정의해야 한다.
+
+필터 클래스, 필터 객체, 필터
+저녁반 -> 5.jsp프로젝트 -> 7일차
+https://github.com/yonggyo1125/curriculum300H/tree/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%ED%95%84%ED%84%B0%2C%20%EB%9E%98%ED%8D%BC%20%ED%81%B4%EB%9E%98%EC%8A%A4%2C%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC
+
+helloFilter1 -> FilterChain::doFilter -> helloFilter2 -> FilterChain::doFilter -> HelloServlet::doGet()...
+응답 후 -> helloFilter2 -> helloFilter1
+
+
+	필터 래퍼
+	HttpServletRequest 인터페이스를 기본 구현해 놓은 Wrapper 클래스 : HttpServletRequestWrapper
+	HttpServletResponse 인터페이스를 기본 구현해 놓은 Wrapper 클래스 : HttpServletResponseWrapper
+
+	필터 래퍼 클래스를 상속받아서 공통기능이나 기본 기능의 수정
+
+	
+
+JSP의 특징
+jsp는 실행되지 않는다. 웹 기술이 아니다. 웹 기술은 서블릿이다.
+
+jsp는 코드를 "서블릿 클래스"로 바꾸어 주는 번역 기술이다.
+
+tomcat이 바꿔 준다.
+
+1. JSP의 페이지 처리과정
+	hello.jsp -> 번역 -> hello_jsp.java(서블릿 클래스) -> hello_jsp.class -> 실행
+			(+ 기능, 확장된 서블릿 형태)
+
+2. JSP 생명 주기
+	_jspInit() : 초기화
+	
+	_jspService(HttpServletRequest request, HttpServletResponse response); :요청 처리 메서드
+		-대부분의 작성 코드가 번역되서 추가되는 영역
+	
+	_jspDestroy()
+
+
+3. 스크립트 태그
+JSP 페이지에서 자바 코드
+1. 선언문
+번역위치가 클래스명 바로 아래쪽에 위치
+변수 - 멤버 변수
+
+<%!
+	자바코드
+%>
+
+2. 스크립틀릿
+_jspService()의 지역 안에 번역
+변수 - 지역변수
+<%
+	자바코드
+%>
+
+3. 표현문
+
+<%=변수%> -> 변수의 값을 출력
+
+_jspService() : 내장객체
+HttpServletRequest request
+HttpServletResponse response
+PageContext pageContext : 현재 실행중인 jsp로 번역된 서블릿 객체의 환경관련 정보
+		:자동으로 버퍼를 활용하게 설계 되어 있다. 8kb
+
+HttpSession session : 개인화된 서비스를 구현하기위한 기술
+ServletContext application; : 서블릿 환경에 관련된 정보, 메서드가 있는 객체
+ServletConfig config : 서블릿 설정관련 객체
+JspWriter out : 출력 스트림
+Object page = this
+
+
+
+jsp 에서 자바 코드를 작성하는 방법
+스크립틀릿
+_jspService
+<%
+	자바 코드...
+%>
+선언문
+클래스명 바로 아래쪽
+<%!
+	자바 코드...
+%>
+표현문
+_jspService()
+<%=변수%>
+out.print(변수);
+
+spring도 웹이 아니다.
+웹 프레임워크이지 웹 자체를 구현하는 것이 아니다.
+스프링 프레임워크 안에 웹 관련 기술이 있는것.
+
+에러 처리
+에러 페이지를 따로 만들지 않고, 서버 코딩 결함으로 에러가 발생 한 경우
+많은 양의 에러를 상세히 알려주게 된다. 이는 프로그래머는 어떨지 모르지만,
+상당한 보안 취약점이 될 수 있다.
+따라서, 오류를 출력할 때는 대부분의 오류 메세지를 감추고,
+특정한 정보만 노출시켜야 한다.
+
+
+4. 디렉티브 태그
+<%@ .... %>
+
+page : JSP 페이지에 대한 설정
+
+include : jsp 페이지에 다른 jsp, html ... (물리적으로 소스)포함
+
+	참고)
+		<jsp:include ... /> -> 요청 처리시에 처리결과를 버퍼에 추가
+
+taglib : 태그 라이브러리, 커스텀 태그 사용 설정
+
+jstl : Jsp Standard Tag Library - 외부에서 제공되는 커스텀 태그
+	(1.2)
+jstl 1.2버전을 의존 라이브러리에 추가 가능
+
+
+<%@ page import="java.util.*", "java.util.stream.*"%>
+util.*에서 *은 모든 클래스를 가져오지만 패키지를 가져오지는 않는다.
+따라서, stream을 가져오지 않기 때문에 따로 임포트를 해 주어야 한다.
+
+<%@ page errorPage="error.jsp"%>
+이 페이지에서 에러가 발생하면 "error.jsp"를 이 페이지 대신에 호출한다.
+
+<%@ page isErrorPage="true"%>
+이 페이지가 에러페이지 임을 확인한다.
+
+EL식?
+
+
+5. JSP의 주석 처리

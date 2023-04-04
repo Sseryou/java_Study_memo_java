@@ -1,0 +1,182 @@
+스트림(Stream)
+
+비동기방식?
+
+
+1. 스트림이란?
+java.util.stream 패키지
+데이터 소스가 무엇이든 간에 같은 방식으로 다룰 수 있게 데이터를 추상화하고,
+데이터를 다루는데 자주 사용되는 메서드들을 정의해 놓음
+
+1) 처리의 통일성 -
+
+배열과 컬렉션 유형에 관계없이
+스트림 객체로 만들어서 동일한 결과를 도출해낼 수 있다.
+
+public static void main(String[] args){
+        Integer[] nums1 = {0,1,2,3,4,5,6,7,8,9,10};
+        List<Integer> nums2 = Arrays.asList(0,1,2,3,4,5,6,7,8,9,10);
+
+        int total1 = Arrays.stream(nums1).mapToInt(n->n).sum();
+        int total2 = nums2.stream().mapToInt(n->n).sum();
+
+        System.out.printf("total1 = %d\n", total1);
+        System.out.printf("total2 = %d\n", total2);
+
+    }
+
+  Integer[] nums1 = {0,1,2,3,4,5,6,7,8,9,10};
+        List<Integer> nums2 = Arrays.asList(0,1,2,3,4,5,6,7,8,9,10);
+        Stream stm1 = Arrays.stream(nums1);
+        Stream stm2 = nums2.stream();
+
+
+        long cnt1 = stm1.count();
+        long cnt2 = stm2.count();
+
+        System.out.printf("count1 = %d\n", cnt1);
+        System.out.printf("count2 = %d\n", cnt2);
+
+
+
+
+2) 재사용성, 효율성
+
+3) 원본소스 변경X
+4) 일회용
+5) 내부 반복 처리
+
+1.5 스트림 객체
+
+배열	Arrays.stream(자료형)
+컬렉션	Collection::stream()
+
+2. 스트림의 연산
+
+중간연산
+	- 반환값 Stream형태의 자료형
+	- 작업 내용 정의
+
+최종연산
+	-반환값이 Stream형태가 아닌 자료형
+	-실제 연산 수행(중간연산 + 최종연산)
+
+1) 중간 연산
+	-반환값 Stream
+	
+IntStream.range(시작번호, 종료번호)
+	.rangeClosed(시작번호, 종료번호)
+
+skip() - 건너뛰기
+limit() - 갯수 제한
+	-java.util.Random
+
+filter() - 필터
+distinct - 중복제거
+
+sorted()
+map()
+
+peek()
+
+//데이터를 특정한 자료형으로 반환함
+//오토박싱/언박싱을 피하기 위해, 특정 자료형에 특화된 함수를 쓰기 위해
+mapToInt() : IntStream
+mapToLong() : LongStream
+mapToDouble() : DoubleStream
+
+Stream
+IntStream
+LongStream
+Double....
+
+Collection
+	Stream()
+
+
+2) 최종연산
+	-중간연산을 수행하고, 최종 연산도 수행해서 결과 도출
+
+forEach() :
+
+allMatch() : 모든 요소가 조건에 매칭될때 true
+	-Predicate
+anyMatch() : 어떠한 요소라도 조건에 매칭될때 true
+	-Predicate
+noneMatch() : 모든 요소가 조건에 매칭 X -> true
+
+
+첫번째 매칭 요소 반환 (filter와 함께 많이 사용)
+findFirst() : 일반 스트림
+findAny() : PararellStream
+
+count() - Stream, xxxStream
+
+IntStream, LongStream ....
+
+
+reduce() : 합성곱
+
+3. 지연된 연산
+
+
+4. 특정 범위의 정수
+1)임의의 수 (java.util.Random)
+
+2) iterate(), generate()
+
+둘 다 무한스트림이므로 값의 제한이 필요하다.
+
+
+5. 빈 스트림 empty()
+
+6. concat()
+스트림 두개를 합친다.
+
+
+IntStream stm1 = IntStream.rangeClosed(1, 10);
+        IntStream stm2 = IntStream.rangeClosed(11, 20);
+        IntStream stm3 = IntStream.concat(stm1, stm2);
+
+        int total = stm3.peek(System.out::println).sum();
+        System.out.printf("total = %d%n", total);
+
+
+
+7.Optional와 OptionalInt, OptionalDouble...
+
+//Null값 등 비어있는 값을 잘 처리하기 위해 만들어진 클래스
+
+class Optional<T>{
+	...
+	T value;
+	...
+}
+
+T get(): value값을 조회 //null값 있으면 오류
+T orElse(T other) : value값이 null -> other로 대체한다.
+ifPresent : 값이 있을때만 출력
+
+
+8. collect()
+
+Collectors (java.util.stream.Collectors)
+스트림 컬렉션과 배열로 변환 - toList(), toSet(),
+toMap(), toCollection(), toArray()
+
+문자열 결합 - joining()
+
+그룹화와 분할 - groupingBy(), partitioningBy()
+
+
+ Map<Integer, List<Student>> students2 = students.stream()
+                .collect(Collectors.groupingBy(Student::getGrade));
+
+
+
+
+
+
+
+
+

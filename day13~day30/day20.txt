@@ -1,0 +1,103 @@
+예외처리
+
+1. 오류와 예외
+
+- 시스템 오류(error)
+	-서버, JVM - 개발자가 통제 X
+	
+- 예외(exception)
+	-프로그램 소스 오류 - 개발자가 통제 가능한 오류
+Throwable
+	Exception
+		IOException
+			-FileNotFoundException
+		
+		NullPointException
+
+		-컴파일시에 예외가 체크
+		- 예외발생시 -> 컴파일X(class 파일 X)
+		-엄격한 예외
+		-예외가 발생하든 하지 않는 반드시 적절한 예외처리 필수
+
+Throwable
+Exception
+	RuntimeException
+		ArithmaticException
+	
+		- 실행중에 예외가 체크
+		- 컴파일은 된다. (class 파일 O)
+		- 유연한 예외
+
+printStackTrace(); - 오류 메세지 및 로그를 출력
+getMessage(); - 오류 메세지만 출력
+
+
+2. 예외 클래스의 종류
+
+3. 예외 처리하기
+
+1) try ~ catch문
+
+try{
+	//예외가 발생할 가능성이 있는 코드
+	//예외가 발생하는 코드
+	// throw 예외 객체
+
+} catch(예외 객체) {
+	//예외가 발생하면 유입되는 구간 - 예외에 대한 적절한 처리
+
+}
+
+
+Throwable
+
+Error(오류) - 시스템 에러, JVM....
+
+Exception(예외) - 프로그램 소스상에서 발생하는 예외
+		-처리가능
+
+
+	-예외 체크가 컴파일시에 진행
+	-예외 발생 컴파일 X(class파일 생성 X)
+	-엄격한 예외
+		-예외가 발생하든 안하는 반드시 적절한 처리(try ~ catch)
+
+Exception
+	-RuntimeException (상속 관계로 있으면 유연한 예외, 없으면 엄격한 예외)
+
+	-예외 체크가 실행중에 진행
+	-컴파일은 가능 (class 파일 생성)
+	-유연한 예외
+
+Throwable은 생성자만 정의되어 있음
+
+
+
+
+2) try ~ catch ~ finally 문
+finally : 예외가 발생하든 안하든 무조건 실행하는 영역
+
+3) try ~ catch ~ resource 문 (자바 1.7이상)
+
+-try ~ catch에서 자동 리소스 해제
+
+try(작업이 종료되면 해제할 리소스) {
+	//오류가 발생할 가능성이 있는 코드
+} catch(.....){
+
+}
+
+AutoCloseable이 기준
+
+
+4. 예외 처리 미루기
+5. 다중 예외 처리
+6. 사용자 정의 예외
+
+
+
+
+
+
+
+

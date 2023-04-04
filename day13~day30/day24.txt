@@ -1,0 +1,470 @@
+String str = "abcdefg";
+        System.out.printf("문자열 길이 = %d\n",str.length());
+
+        String str2 = "1 little, 2 little, 3 little indians";
+        String str3 = str2.replace("little", "big");
+        System.out.println(str3);
+
+
+str.length() 
+문자열 길이를 반환한다.
+
+
+char[] chars = str.toCharArray();
+        System.out.println(Arrays.toString(chars));
+
+toCharArray();
+문자열을 문자형 배열로 바꿔 저장한다.
+
+
+.replace()
+문자열 중 특정한 문자열을 다른 문자열로 바꾼다.
+
+String cellphone = "010-3481-2101";
+        String cellphone2 = cellphone.replaceAll("[^0-9]", "");
+        System.out.println(cellphone2);
+
+.replaceAll()
+문자열 중 특정한 문자열을 다른 문자열로 바꾼다.
+
+String str4 = str2.substring(9);
+        System.out.println(str4);
+
+.substring() 특정한 위치부터 문자열을 시작한다.
+
+ String str5 = str2.substring(9,17);
+        System.out.println(str5);
+이상과 미만으로 범위를 설정할 수 있다.
+
+
+
+.trim()
+공백을 제거한다.
+ String str6 = "          abcd          ";
+        String str7 = str6.trim();
+        System.out.println(str7);
+
+
+
+isEmpty() - 공백이 없는 비어 있는 문자
+isBlank() -> 공백을 포함한 비어 있는 문자
+trim() + isEmpty() = isBlank()
+
+System.out.println("       ".trim().isEmpty());
+System.out.println("       ".isBlank());
+
+
+
+
+정규 표현식?
+
+
+
+열거형(enums)
+1. 열거형이란?
+- 클래스의 일종
+- 상수만을 관리하기 위한 클래스
+
+예) java.util.Calendar
+
+
+
+2. 열거형 정의와 사용
+-> java.lang.Enum의 하위 클래스
+enum 클래스명 {상수, ... }
+
+
+Enum 상수 -> 정적 상수
+	int ordinal() : enum 상수의 순서 번호
+	String name() : enum 상수의 문자열 이름
+	
+	valueOf()
+	Enum.valueOf()
+
+
+Transportation trans2 = Enum.valueOf(Transportation.class, "BUS");
+if(trans2 == trans){
+            System.out.println("같다!");
+
+        }
+
+Class class.
+
+Transportation trans3 = Transportation.valueOf("BUS"); //BUS를 가지고 enum을 찾음.
+        if(trans3 == trans){
+            System.out.println("같다!");
+        }
+
+switch 구문은 특이하게 enum을 인식한다.
+따라서 enum을 넣은 switch구문 사용시
+enum안의 상수만 적어주면 된다. (명시 필요 없음)
+
+ Transportation trans = Transportation.BUS;
+
+        switch (trans){
+            case SUBWAY:
+                System.out.println("지하철!");
+                break;
+            case BUS :
+                System.out.println("버스!");
+                break;
+            case TAXI:
+                System.out.println("택시!");
+                break;
+            case TRAIN:
+                System.out.println("기차!");
+                break;
+        }
+
+기본 자료형, 참조 자료형
+클래스 = 참조 자료형
+
+
+SUBWAY(1450), BUS(1350), TAXI(4000), TRAIN(1000);
+    
+    private int basicFare;
+    Transportation(int basicFare){
+        this.basicFare = basicFare;
+    }
+Enum은 클래스다.
+
+Enum 내부의 상수는 객체다.
+
+
+기본생성자의 원리를 이용해서 enum에 basicFare값 부여.
+
+다른 클래스에서 사용시 자동적으로 private가 된다.
+
+enum 사용시, 위에서 임포트를 해 줘야 편하게 사용 가능하다.
+import static 패키지명.Enum명.*;
+
+import static exam02.Transportation.*;
+
+class Transportation{
+	public static final Transportation SUBWAY = new Transportation(1450);
+	public static final Transportation BUS = new Transportation(1350);
+	public static final Transportation TAXI = new Transportation(4000);
+	public static final Transportation TRAIN = new Transportation(10000);
+}
+
+사실, 추상클래스이다.
+
+abstract class Transportation extends java.lang.Enum {
+	public static final Transportation SUBWAY = new Transportation(1450);
+	public static final Transportation BUS = new Transportation(1350);
+	public static final Transportation TAXI = new Transportation(4000);
+	public static final Transportation TRAIN = new Transportation(10000);
+}
+
+
+
+
+enum 클래스명{
+	상수, 상수 , ...
+}
+
+enum Transportation{
+	BUS, SUBWAY ...
+}
+
+class Transportation extend Enum{
+	public static final Transportation BUS = new Transportation();
+
+	private Transportation() {}
+}
+
+int ordinal() -> 상수의 위치(0, ....)
+String name() -> Enum 상수명
+
+static valueOf(String name)
+Enum.valueOf(Class class, String name)
+
+enum은 추상메서드이고,
+enum안의 상수는 객체이다.
+
+
+enum은 생성자가 private이다.
+즉, 외부 클래스에서 super를 이용한 상속이 불가능하다.
+
+enum 안의 인스턴스 자원은 변경 가능하다.
+이름이 상수일 뿐이고, 상수이기 때문에 주소값도 같지만, 자원까지 상수로 지정하지는 않는다.
+
+
+
+3. 모든 열거형의 상위 클래스
+4. 컴파일러가 자동으로 추가해주는 메서드
+5. 열거형에 멤버 추가하기
+6. 열거형에 추상메서드 추가하기
+
+SUBWAY(1450){
+        @Override
+        public int totalFare(int persons) {
+            return persons * getBasicFare();
+        }
+    }, BUS(1350){
+        @Override
+        public int totalFare(int persons) {
+            return persons * getBasicFare();
+        }
+    }, TAXI(4000){
+        @Override
+        public int totalFare(int persons) {
+            return persons * getBasicFare();
+        }
+    }, TRAIN(10000){
+        @Override
+        public int totalFare(int persons) {
+            return persons * getBasicFare();
+        }
+    };
+
+    private int basicFare;
+    Transportation(int basicFare){
+        this.basicFare = basicFare;
+    }
+    public int getBasicFare(){
+       return basicFare;
+    }
+    public abstract int totalFare(int person);
+
+
+final int num = 10; -> 값.
+//num = 20; -> 상수이므로 바뀌지 않는다.
+
+클래스와 메서드를 임의로 만들었다 가정
+
+Student s1 = new Student(); -> s1 = 참조변수. 주소값을 가지고 있다. 객체와 변수는 동일하지 않다.  
+참조변수는 주소값이고 객체는 값이다.
+
+s1 = new Student(); -> 가능. 참조변수 '이름'은 그대로지만 '주소값'이 갱신된다.
+이것이 일반적인 클래스지만, enum에서는 조금 다르다.
+기본적으로 상수이기 때문에 주소값이 같아야만 한다.
+
+같은 enum에서 나온 상수이면 참조변수에 그 상수를 넣고 주소값을 비교해서 true가 나오게 할 수 있다...
+여긴 반대로 주소값은 같고 값이 다르게 가능하다.?(내부 값은 변경이 가능하니...)
+
+
+class Transportation extend ENUM{
+	public static final Transportation SUBWAY = new Transportation();
+	public static final Transportation BUS = new Transportation();
+	public static final Transportation TAXI = new Transportation();
+	public static final Transportation TRAIN = new Transportation();
+
+	private Transportation(){}
+	//용도를 한정하여 사용하기 위해서 클래스와는 다르게 기본 생성자가 private다.
+	//enum의 목적은 상수만 모아놓고 관리하기 위해서이다.
+
+}
+
+
+
+
+
+
+애너테이션(annotation)
+- 용도가 한정된 클래스의 일종
+
+
+
+
+1. 애너테이션이란?
+	주석, 주해, 설명
+	-> 정보 전달
+
+@애너테이션명
+- 인터페이스
+- @interface 애너테이션명 extends java.lang.annotation.Annotation {
+
+}
+
+
+2. 표준 애너테이션 - JDK에 정의된 애너테이션
+	@Override
+	@SuppressWarning
+	@FunctionInterface ...
+	@Deprecated
+	@SafeVars
+
+
+3. 메타 애너테이션 - 애너테이션을 만드는 애너테이션
+	@Retention - 중요
+		- RetentionPolicy
+			SOURCE 	- 소스상에서만 존재하고 컴파일되면 제거
+				- 컴파일러가 참고하는 애너테이션
+				- @Override
+					-이 메서드는 재정의 메서드이다 -> 컴파일러 정보 전달
+				
+			CLASS - 기본값
+				- 소스상에도 존재, 클래스에서도 존재, 실행중에는 동작하지 않는다.
+			RUNTIME
+				- 실행 중에 정보 체크
+
+				- @Controller
+
+	@Target - 중요
+		ElementType
+			.TYPE -> 클래스, 인터페이스, 애너테이션, Enum ...
+			.TYPE_USE -> 타입이 사용되는 모든 곳 - 참조 변수(참조자료형 멤버변수, 매개변수)
+			.PARAMETER
+			.METHOD -> 메서드
+
+	@Documented
+	@Repeatable
+	...
+
+
+	default 기본값
+
+애너테이션 오버라이드의 구성요소
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.SOURCE) - 컴파일 시 제거
+public @interface Override {
+}
+
+
+
+애너테이션
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface MyAnno2 {
+    String value();
+}
+
+
+
+@MyAnno2(value = "테스트 애노테이션", max = 100, min=10)
+public class Ex03 {
+
+}
+
+클래스 정보의 일부가 된다.
+
+public static void main(String[] args) {
+        Class cls = Ex03.class;
+        MyAnno2 anno2 = (MyAnno2)cls.getAnnotation(MyAnno2.class);
+        String value = anno2.value();
+                int max = anno2.max();
+                int min = anno2.min();
+
+                System.out.printf("value = %s\n", value);
+            System.out.printf("max = %d\n", max);
+            System.out.printf("min = %d\n", min);
+    }
+
+디폴트를 사용해 기본값을 설정 가능하다
+
+
+
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface MyAnno2 {
+    String value();
+    int max() default 100;
+    int min() default 10;
+}
+
+
+배열을 넣을 수도 있다.
+
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface MyAnno2 {
+    String[] value();
+    int max() default 100;
+    int min() default 10;
+}
+
+
+@MyAnno2(value = {"테스트 애노테이션", "테스트2 애노테이션"})
+public class Ex03 {
+
+}
+
+public static void main(String[] args) {
+        Class cls = Ex03.class;
+        MyAnno2 anno2 = (MyAnno2)cls.getAnnotation(MyAnno2.class);
+        String[] value = anno2.value();
+                int max = anno2.max();
+                int min = anno2.min();
+
+                System.out.println(Arrays.toString(value));
+            System.out.printf("max = %d\n", max);
+            System.out.printf("min = %d\n", min);
+    }
+
+애노테이션은 기능을 정의한게 아닌, 정보전달을 목적으로 만들어진 것이다.
+
+애노테이션 (Annotation)
+- 주석, 주해, 설정
+- 정보전달
+- 클래스의 일종(@interface)
+
+- 표준 애너테이션 -JDK에 정리된 표준적인 애너테이션
+ 	- @Override
+	- @FunctionalInterface
+	- @Depecated
+	- @SuppressWarning
+	...
+
+- 메타 애너테이션 - 에너테이션을 만들기 위한 에너테이션
+	- @Retention
+		RetentionPolisy
+			SOURCE
+			CLASS
+			RUNTIME
+
+	- @Target
+		ElementType
+			TYPE : 클래스, 인터페이스, Enum...
+			ANNOTATION_TYPE : 에너테이션
+			FIELD : 멤버 변수
+			PARAMETER : 매개변수
+			TYPE-USE : 멤버 변수, 매개 변수
+			METHOD : 메서드
+			CONSTRUCTOR : 생성자
+
+- 추상 메서드 항목 -> 설정 항목
+ 	value -> 설정시 생략 가능
+	default 기본값;
+		
+
+	String[] value;
+
+	@MyAnno(value="값") -> @MyAnno("값")
+	@MyAnno(value={"값1", "값2",..}) -> @MyAnno({"값1", "값2",..})
+
+
+Class
+	Annotation getAnnotation
+	Annotation[] getAnnotation
+
+모든 애너테이션은 애너테이션의 구현체이다.
+
+java.lang.annotation.Annotation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1967 @@
+과정정리
+
+
+src 우클릭 디렉토리생성
+src -> main -> webapp
+
+src -> main -> webapp -> META-INF
+
+
+src -> main -> webapp -> WEB-INF
+
+
+
+의존성 추가
+
+<dependencies>안에 집어넣기
+
+
+javax.servlet-api
+JavaServer Pages(TM) API(javax.servlet.jsp-api)
+JSTL(1.2 버전)
+JUnit Jupiter API
+JUnit Jupiter (Aggregator)
+Mockito Core 
+Mockito JUnit Jupiter
+Project Lombok
+
+
+ <build>
+    <plugins>
+      <plugin> 안에 집어넣기
+	  Maven Surefire Plugin (<groupId>와 <artifactId>, <version>까지만 복사)
+	  
+
+
+
+전부 넣은 후  우측상단 maven -> 새로고침 버튼
+
+컴파일 버튼 눌러서
+
+smart Tomcat
+
+tomcat9
+디플로이먼트
+
+콘텍스트 패스 /project로 수정
+
+
+webapp에 index.jsp 생성
+
+
+java에 controllers 패키지 생성
+java에 models 패키지 생성
+
+java에 controllers 를 controllers.members 로 이름 변경
+
+controllers.members에 클래스 생성 LoginController, JoinController
+
+JoinController에 HttpServlet 상속 @WebServlet("/member/join") 애노태이션 부착
+doget, dopost 오버라이드
+
+LoginController에 HttpServlet 상속 @WebServlet("/member/login") 애노태이션 부착
+doget, dopost 오버라이드
+
+webapp에 member 디렉토리 생성
+member에 join.jsp 생성
+member에 login.jsp 생성
+
+JoinController에 슈퍼 제거
+RequestDispatcher rd = req.getRequestDispatcher("/member/join.jsp");
+        rd.forward(req, resp);
+		
+LoginController에 슈퍼 제거
+ RequestDispatcher rd = req.getRequestDispatcher("/member/login.jsp");
+        rd.forward(req, resp);
+		
+java에 filters 패키지 생성
+filters 패키지에 CommonFilter 클래스 생성 import javax.servlet.Filter; 임플리먼트
+doFilter오버라이드
+filterChain.doFilter(servletRequest, servletResponse);
+
+filters 패키지에 CommonRequestWrapper 클래스생성
+extends HttpServletRequestWrapper
+
+생성자 생성
+
+public CommonRequestWrapper(HttpServletRequest request) {
+        super(request);
+		
+		String method = request.getMethod().toUpperCase();
+        if(method.equals("POST")){
+            try {
+                request.setCharacterEncoding("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+		
+    }
+	
+	WEB-INF 내에 web.xml 생성
+	
+	<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" 
+xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                       
+http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+
+    <filter>
+        <filter-name>commonFilter</filter-name>
+        <filter-class>filters.CommonFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>commonFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+</web-app>
+
+WEB-INF 내에 tags 디렉토리 생성
+tags 내에 layouts 디렉토리 생성
+layouts 내에 common.tag 생성
+
+<%@ attribute name="footer" fragment="true" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>연습!</title>
+        <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
+        <script src="<c:url value='/js/common.js' />"></script>
+    </head>
+
+    <body>
+        <header>
+            <jsp:invoke fragment="header" />
+        </header>
+        <main>
+               <jsp:doBody />
+        </main>
+        <footer>
+            <jsp:invoke fragment="footer" />
+        </footer>
+
+
+    </body>
+</html>
+
+layouts 내에 main.tag 생성
+
+<%@ tag body-content="scriptless" pageEncoding="UTF-8" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<layout:common>
+    <jsp:attribute name="header">
+        <h1>사이트 상단</h1>
+    </jsp:attribute>
+    <jsp:attribute name="footer">
+            <h1>사이트 하단</h1>
+    </jsp:attribute>
+    <jsp:body>
+        <jsp:doBody />
+    </jsp:body>
+</layout:common>
+
+join.jsp
+
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<layout:main>
+    <h1>회원가입</h1>
+    <form method="post" action="<c:url value='/member/join' />">
+        <dl>
+            <dt>아이디</dt>
+            <dd>
+                <input type="text" name="userId">
+            </dd>
+        </dl>
+        <dl>
+            <dt>비밀번호</dt>
+            <dd>
+                <input type="password" name="userPw">
+            </dd>
+        </dl>
+         <dl>
+            <dt>비밀번호 확인</dt>
+            <dd>
+                <input type="password" name="userPwRe">
+            </dd>
+         </dl>
+         <dl>
+            <dt>회원명</dt>
+            <dd>
+                <input type="text" name="userNm">
+            </dd>
+         </dl>
+         <div>
+            <input type="checkbox" name="agree" value="1" id="agree">
+            <label for="agree">약관 동의합니다.</label>
+         </div>
+         <button type="submit">가입하기</button>
+    </form>
+</layout:main>
+
+
+login.jsp
+
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<layout:main>
+    <h1>로그인</h1>
+    <form method="post" action="<c:url value='/member/login' />">
+        <dl>
+            <dt>아이디</dt>
+            <dd>
+                <input type="text" name="userId">
+            </dd>
+        </dl>
+        <dl>
+            <dt>비밀번호</dt>
+            <dd>
+                <input type="password" name="userPw">
+            </dd>
+            <div>
+                <input type="checkbox" name="saveID" value="1" id="saveId">
+                <label for="saveId">아이디 저장</label>
+            </div>
+            <button type="submit">로그인</button>
+        </dl>
+</layout:main>
+
+
+테스트
+
+test/java
+models.member 패키지 생성
+JoinService 클래스 생성
+
+public class JoinService {
+
+    public void join(Member member){
+
+    }
+
+    
+}
+
+
+여기까지 쓴 후 Member 클래스 생성
+
+import lombok.Data;
+
+
+@Data //@Getter @Setter @EqualsAndHashCode, @RequiredArgsConstructor, @ToString
+public class Member {
+    private String userID;
+    private String userPw;
+    private String userPwRe;
+    private String userNm;
+
+    private boolean agree;
+
+}
+
+tests 패키지 생성
+MemberJoinTest 클래스 생성
+
+@ExtendWith(MockitoExtension.class)
+public class MemberJoinTest {
+    @Test
+    @DisplayName("회원 가입에 성공하면 예외가 발생하지 않음")
+    public void joinSuccess(){
+        Member member = new Member();
+        JoinService service = new JoinService();
+        assertDoesNotThrow(()->{
+            service.join(member);
+        });
+    }
+
+MemberJoinTest 에서
+
+
+@ExtendWith(MockitoExtension.class)
+public class MemberJoinTest {
+
+    private Member member;
+	
+	   private JoinService service;
+
+    @BeforeEach
+    public void init() {
+        joinService = new service();
+		member = new Member();
+    }
+
+
+    @Test
+    @DisplayName("회원 가입에 성공하면 예외가 발생하지 않음")
+    public void joinSuccess(){
+        Member member = new Member();
+        JoinService service = new JoinService();
+        assertDoesNotThrow(()->{
+            service.join(member);
+        });
+    }
+
+
+}
+까지 추가  @BeforeEach(테스트 전 항상 실행)
+
+
+
+수정
+
+
+@ExtendWith(MockitoExtension.class)
+public class MemberJoinTest {
+
+    private Member member;
+    private JoinService service;
+
+    @BeforeEach
+    public void init() {
+        service = new JoinService();
+        member = new Member();
+        member.setUserID("user01");
+        member.setUserPw("12345678");
+        member.setUserPwRe("12345678");
+        member.setUserNm("사용자01");
+        member.setAgree(true);
+    }
+
+
+    @Test
+    @DisplayName("회원 가입에 성공하면 예외가 발생하지 않음")
+    public void joinSuccess(){
+
+        assertDoesNotThrow(()->{
+            service.join(member);
+        });
+    }
+
+    @Test
+    @DisplayName("Join 메서드 null값이 들어가면 BadRequestException 발생")
+    public void dataValidation1(){
+
+    }
+
+
+}
+
+models.member 에 BadRequestException 클래스 생성
+
+public class BadRequestException extends RuntimeException{
+    
+    public BadRequestException(String message){
+        super(message);
+    }
+    
+}
+
+멤버조인테스트로 복귀
+
+
+
+@Test
+    @DisplayName("Join 메서드 null값이 들어가면 BadRequestException 발생")
+    public void dataValidation1(){
+        assertThrows(BadRequestException.class, () -> {
+           service.join(null);
+        });
+    }
+	
+	까지 넣고 테스트 수행 -> 실패나옴
+	
+	
+	
+	조인서비스로 이동
+	
+public class JoinService {
+
+    public void join(Member member){
+        if(member == null){
+            throw new BadRequestException("잘못된 접근입니다.");
+        }
+    }
+
+
+}
+로 코드 수정
+
+멤버조인테스트로 이동
+
+
+데이터벨리데이션 테스트 다시 실행 -> 성공
+
+
+@Test
+    @DisplayName("필수 항목 체크 - userId, userPw, userPwRe, userNm, 실패시 BadRequestException ")
+    public void dataValidation2(){
+        assertThrows(BadRequestException.class, () ->{
+            Member member = new Member();
+            service.join(member);
+
+
+        });
+
+    }
+	추가
+	
+	
+
+test에 validators 패키지 추가
+
+인터페이스 추가
+public interface Validator<T> {
+    void check(T t);
+    
+    
+    
+}
+
+인터페이스 추가
+public interface RequiredValidator {
+
+    default void requiredCheck(String value, RuntimeException e){
+        if(value == null || value.isBlank()){
+            throw e;
+        }
+    }
+
+}
+
+모델스멤버 패키지에 JoinValidator 클래스 생성
+
+public class JoinValidator implements Validator<Member>, RequiredValidator {
+    @Override
+    public void check(Member member) {
+
+    }
+
+}
+
+현재 멤버조인서비스는 벨리데이터를 의존중.
+
+의존하는것은 수정 ,업데이트가 될 가능성이 많음
+그렇기 때문에 외부에서 주입받는 형식이 적절함.
+
+의존성 주입
+
+수정
+public class JoinService {
+
+    private Validator validator = new JoinValidator();
+
+    public void join(Member member){
+        if(member == null){
+            throw new BadRequestException("잘못된 접근입니다.");
+        }
+    }
+
+    public void setValidator(Validator validator){
+        this.validator = validator;
+    }
+
+
+}
+
+멤버조인테스트로 이동, init 수정
+
+@BeforeEach
+    public void init() {
+        service = new JoinService();
+        service.setValidator(new JoinValidator());
+        member = new Member();
+        member.setUserID("user01");
+        member.setUserPw("12345678");
+        member.setUserPwRe("12345678");
+        member.setUserNm("사용자01");
+        member.setAgree(true);
+    }
+
+
+
+의존성 관리의 예시
+https://github.com/yonggyo1125/board_jsp-11-/blob/master/main/java/models/member/MemberServiceManager.java
+
+클래스 하나에서 끌어오는 형식으로 여러가지 기능들을 구현하는 데 필요한 자원으로 사용한다.
+즉, 클래스 하나만 바꿈으로써 수정 사항을 수많은 기능들에 한꺼번에 반영할 수 있게, 의존성을 설계해서 이용했다.
+
+문어머리...문어발 구조....라고 생각하기...
+
+스프링-> 의존 주입 구조에서 착안
+
+캡슐화..중요...
+
+models.member에 ServiceManager 클래스 생성
+
+public class ServiceManager {
+
+    public Validator joinValidator() {
+        return new JoinValidator(); //이 항목을 수정해서 여러가지 변동 사항 적용가능
+    }
+
+    public JoinService getJoinService(){
+        JoinService service = new JoinService();
+        service.setValidator(joinValidator()); //여기도..
+        return service;
+    }
+
+}
+
+멤버조인테스트로 이동
+
+@BeforeEach
+    public void init() {
+        ServiceManager manager = new ServiceManager();
+        service = manager.getJoinService();
+
+        member = new Member();
+        member.setUserID("user01");
+        member.setUserPw("12345678");
+        member.setUserPwRe("12345678");
+        member.setUserNm("사용자01");
+        member.setAgree(true);
+    }
+로 수정
+
+변수로 주입받지 않고, 메서드로 주입받게 한다.
+
+//0330, 미완성, 내일 마무리
+
+//0331
+joinService로 이동
+private Validator validator = new JoinValidator();를
+private Validator validator; 로 변경
+
+
+JoinValidator 이동
+
+public class JoinValidator implements Validator<Member>, RequiredValidator 
+
+RequiredValidator 제거
+
+Validator이동해서 수정
+public interface Validator<T> extends RequiredValidator {
+
+JoinValidator 이동
+
+수정
+@Override
+    public void check(Member member) {
+        String userId = member.getUserID();
+        String userPw = member.getUserPw();
+        String userPwRe = member.getUserPwRe();
+        String userNm = member.getUserNm();
+        /* 필수 입력 항목 시작*/
+        requiredCheck(userId, new BadRequestException("아이디를 입력하세요."));
+        requiredCheck(userPw, new BadRequestException("비밀번호를 입력하세요."));
+        requiredCheck(userPwRe, new BadRequestException("비밀번호를 확인하세요."));
+        requiredCheck(userNm, new BadRequestException("회원명을 입력하세요."));
+        /* 필수 입력 항목 끝*/
+    }
+
+
+MemberJoinTest로 이동
+
+
+ @Test
+    @DisplayName("필수 항목 체크 - userId, userPw, userPwRe, userNm, 실패시 BadRequestException ")
+    public void dataValidation2(){
+        assertThrows(BadRequestException.class, () ->{
+            Member member = new Member();
+            service.join(member);
+        });
+
+    }
+	수정
+	
+	@Test
+    @DisplayName("필수 항목 체크 - userId, userPw, userPwRe, userNm, 실패시 BadRequestException ")
+    public void dataValidation2(){
+        assertThrows(BadRequestException.class, () ->{
+           //userNm이 없는 경우
+            member.setUserNm(null);
+            service.join(member);
+        });
+        assertThrows(BadRequestException.class, () ->{
+            //userPwRe이 없는 경우
+            member.setUserPwRe(null);
+            service.join(member);
+        });
+        assertThrows(BadRequestException.class, () ->{
+            //userPw이 없는 경우
+            member.setUserPw(null);
+            service.join(member);
+        });
+        assertThrows(BadRequestException.class, () ->{
+            //userId이 없는 경우
+            member.setUserId(null);
+            service.join(member);
+        });
+
+    }
+	
+	public class JoinService로 이동
+	
+	public void join(Member member){
+
+
+        //회원가입 유효성 검사
+        validator.check(member);
+
+    }
+	
+	수정
+	
+	JoinValidator 이동
+	@Override
+    public void check(Member member) {
+
+        if(member == null){
+            throw new BadRequestException("잘못된 접근입니다.");
+        }
+
+        String userId = member.getUserID();
+        String userPw = member.getUserPw();
+        String userPwRe = member.getUserPwRe();
+        String userNm = member.getUserNm();
+        /* 필수 입력 항목 시작*/
+		System.out.println(member);
+        requiredCheck(userId, new BadRequestException("아이디를 입력하세요."));
+        requiredCheck(userPw, new BadRequestException("비밀번호를 입력하세요."));
+        requiredCheck(userPwRe, new BadRequestException("비밀번호를 확인하세요."));
+        requiredCheck(userNm, new BadRequestException("회원명을 입력하세요."));
+        /* 필수 입력 항목 끝*/
+    }
+
+}수정
+
+멤버조인테스트에 추가
+
+ @Test
+    @DisplayName("userId가 6자리 이상, 영문만 입력 가능 -BadRequestException")
+    public void dataValidation3() {
+        //6자리 미만 아이디 예외 검증
+        assertThrows(BadRequestException.class, () -> {
+           member.setUserID("abcd"); 
+           service.join(member);
+        });
+    }
+
+
+validators 패키지에 StrLengthValidator 인터페이스 추가
+
+public interface StrLengthValidator {
+    
+    default void strLengthCheck(String str, int min, int max, RuntimeException e) {
+        
+        if(str.length() < min || (max > 0 && str.length() > max)){
+            throw e;
+        }
+        
+    }
+    default void strLengthCheck(String str, int min, RuntimeException e){
+        strLengthCheck(str, min, 0, e);
+    }
+    
+    
+}
+
+Validator로 이동
+public interface Validator<T> extends RequiredValidator , StrLengthValidator {
+    void check(T t);
+
+
+}
+로 수정
+
+JoinValidator로 이동
+
+	
+	
+	public void check(Member member) {
+
+        if(member == null){
+            throw new BadRequestException("잘못된 접근입니다.");
+        }
+
+        String userId = member.getUserID();
+        String userPw = member.getUserPw();
+        String userPwRe = member.getUserPwRe();
+        String userNm = member.getUserNm();
+        /* 필수 입력 항목 시작*/
+        System.out.println(member);
+        requiredCheck(userId, new BadRequestException("아이디를 입력하세요."));
+        requiredCheck(userPw, new BadRequestException("비밀번호를 입력하세요."));
+        requiredCheck(userPwRe, new BadRequestException("비밀번호를 확인하세요."));
+        requiredCheck(userNm, new BadRequestException("회원명을 입력하세요."));
+        /* 필수 입력 항목 끝*/
+
+        // userId 자리수 체크 - 6자리 이상
+        strLengthCheck(userId, 6, new BadRequestException("아이다는 6자리 이상 입력하세요."));
+
+
+    }
+	로 수정
+	
+	
+	MemberJoinTest로 이동
+	dataValidation3()실행
+	
+	실행후
+	@Test
+    @DisplayName("userId가 6자리 이상, 영문만 입력 가능 -BadRequestException")
+    public void dataValidation3() {
+        //6자리 미만 아이디 예외 검증
+        assertThrows(BadRequestException.class, () -> {
+           member.setUserID("abcd");
+           service.join(member);
+        });
+
+        //영문이 아닌 문자가 들어갔을때 예외 검증
+        assertThrows(BadRequestException.class, () -> {
+           member.setUserID("아이디123!!");
+           service.join(member);
+        });
+
+    }
+로 수정
+
+JoinValidator로 이동
+
+// userId를 알파벳으로만 한정
+        Pattern pattern = Pattern.compile("[^a-zA-Z]");
+        Matcher matcher = pattern.matcher(userId);
+        if(matcher.find()){
+            throw new BadRequestException("아이디는 알파벳으로만 입력하세요.");
+        }
+추가
+
+
+
+
+MemberJoinTest로 이동해서 public void dataValidation3()  테스트
+
+-통과-
+
+MemberJoinTest에서 추가
+
+@Test
+    @DisplayName("userPw 자리수는 8자리 이상 입력 검증 - BadRequestException")
+    public void dataValidation4(){
+        assertThrows(BadRequestException.class, () -> {
+            member.setUserPw("1234");
+            service.join(member);
+        });
+    }
+	
+
+
+ JoinValidator이동
+ 
+ 
+ //userPw 자리수는 8자리 이상 체크
+        strLengthCheck(userPw, 8, new BadRequestException("비밀번호는 8자리 이상 입력하세요."));
+		
+		추가
+		
+MemberJoinTest이동 dataValidation4 실행
+-통과-
+
+
+MemberJoinTest에서 새로 수정
+
+
+@BeforeEach
+    public void init() {
+        ServiceManager manager = new ServiceManager();
+        service = manager.getJoinService();
+
+        member = new Member();
+        member.setUserID("user01");
+        member.setUserPw("_aA123456");
+        member.setUserPwRe("_aA123456");
+        member.setUserNm("사용자01");
+        member.setAgree(true);
+    }
+	
+	로 수정
+	
+	
+	@Test
+    @DisplayName("userPw는 알파벳, 숫자, 특수문자가 각각 1개 이상 입력 검증 - BadRequestException")
+    public void dataValidation5(){
+        assertThrows(BadRequestException.class, () -> {
+            member.setUserPw("12345678");
+            service.join(member);
+        });
+
+    }
+	
+	추가하고 실행
+	
+	MemberJoinTest를 전체 실행해서 테스트
+	
+	
+	@BeforeEach
+    public void init() {
+        ServiceManager manager = new ServiceManager();
+        service = manager.getJoinService();
+
+        member = new Member();
+        member.setUserID("userfirst");
+        member.setUserPw("_aA123456");
+        member.setUserPwRe("_aA123456");
+        member.setUserNm("사용자01");
+        member.setAgree(true);
+    }
+	로 수정
+	
+	
+	MemberJoinTest를 전체 실행해서 테스트
+	
+	
+	
+	 JoinValidator 이동
+	 
+	 check에 추가
+	 
+	  //userPw가 알파벳, 숫자, 특수문자 최소 1개 이상 포함 여부
+        Pattern alphaP = Pattern.compile("a-zA-Z"); //대소문자 알파벳 포함 여부
+        Pattern numP = Pattern.compile("0-9"); //숫자 포함 여부
+        Pattern specialCharsP = Pattern.compile("!@#\\$%^&\\*\\(\\)"); //특수문자 포함여부
+
+        Matcher matcher1 = alphaP.matcher(userPw);
+        Matcher matcher2 = numP.matcher(userPw);
+        Matcher matcher3 = specialCharsP.matcher(userPw);
+
+        if(!matcher1.find() || !matcher2.find() || !matcher3.find()){
+            throw new BadRequestException("비밀번호는 알파벳, 숫자, 특수문자가 1개 이상 포함되어야 합니다.");
+	 
+	 
+	 MemberJoinTest로 이동
+	 
+	 dataValidation5 실행
+	 통과-
+	 //member.setUserPw("12345678"); 주석처리후 실행
+	 통과해서 수정하러감
+	 
+	 
+	 JoinValidator로 이동
+	 
+	 
+	 
+	 
+	  if(!matcher1.find() || !matcher2.find() || !matcher3.find()){
+            throw new BadRequestException("비밀번호는 알파벳, 숫자, 특수문자가 1개 이상 포함되어야 합니다.");
+        }
+		
+		위에 
+		 System.out.println(userPw);
+        System.out.println(matcher1.find());
+        System.out.println(matcher2.find());
+        System.out.println(matcher3.find()); 붙이기
+	 
+	 
+	 System.out.println(userPw);
+        System.out.println(matcher1.find());
+        System.out.println(matcher2.find());
+        System.out.println(matcher3.find());
+
+        if(!matcher1.find() || !matcher2.find() || !matcher3.find()){
+            throw new BadRequestException("비밀번호는 알파벳, 숫자, 특수문자가 1개 이상 포함되어야 합니다.");
+        }
+		
+	 Pattern alphaP = Pattern.compile("[a-zA-Z]"); //대소문자 알파벳 포함 여부
+        Pattern numP = Pattern.compile("[0-9]"); //숫자 포함 여부
+        Pattern specialCharsP = Pattern.compile("[_!@#\\$%^&\\*\\(\\)]"); //특수문자 포함여부
+		
+		로 수정
+		
+		 System.out.println(userPw);
+        System.out.println(matcher1.find());
+        System.out.println(matcher2.find());
+        System.out.println(matcher3.find());
+		를 제거
+		
+		멤버조인테스트로 이동, 실행
+		
+		 @Test
+    @DisplayName("userPw는 알파벳, 숫자, 특수문자가 각각 1개 이상 입력 검증 - BadRequestException")
+    public void dataValidation5(){
+        assertThrows(BadRequestException.class, () -> {
+            member.setUserPw("12345678");
+            service.join(member);
+        });
+
+    }
+	
+	멤버조인테스트에 추가
+	
+	@Test
+    @DisplayName("userPw, userPwRe 일치 검증 - BadRequestException")
+    public void dataValidation6() {
+        assertThrows(BadRequestException.class, () -> {
+            //member.setUserPw("1234");
+            service.join(member);
+        });
+    }
+	
+	-실패, 오류없음-
+	
+	
+	JoinValidator로 이동
+	
+	
+	 //userPw, userPwRe 일치여부
+        if(!userPw.equals(userPwRe)){
+            throw new BadRequestException("비밀번호가 일치하지 않습니다.");
+        }
+		
+		추가
+		
+		멤버조인테스트로 이동
+		
+		dataValidation6() 실행
+		주석 풀고 실행
+		
+		멤버조인테스트 전부 실행
+		
+		
+		-전부 통과-
+		
+		
+		 
+		 
+		 
+		 models.member 패키지에 MemberDao 클래스 추가
+		 JoinService가 회원가입 처리에 필요한 클래스
+		 
+		 public class MemberDao {
+    private static Map<String, Member> members = new HashMap<>();
+    
+    /*
+    * 회원 정보 조회
+    * */
+    
+    public Member get(String userId) {
+        return members.get(userId);
+    }
+    /*
+        회원정보 추가
+     */
+    
+    public void register(Member member){
+        members.put(member.getUserID(), member);
+    }
+    /*회원정보 삭제
+    * */
+    public void delete(String userId){
+        members.remove(userId);
+    }
+    
+    
+}
+
+JoinService 로 이동
+public class JoinService {
+
+    private Validator validator;
+    private MemberDao memberDao;
+    
+    public JoinService(MemberDao memberDao, Validator validator){
+        //의존성을 외부에서 주입받아 관리에 편리하게 구성
+        this.memberDao = memberDao;
+        this.validator = validator;
+    }
+
+    public void join(Member member){
+
+
+        //회원가입 유효성 검사
+        validator.check(member);
+
+        //회원가입 처리
+        memberDao.register(member);
+
+    }
+
+    
+
+
+}
+
+수정
+
+
+ServiceManager 이동
+		 
+public class ServiceManager {
+
+    public MemberDao memberDao(){
+        return new MemberDao();
+    }
+
+    public Validator joinValidator() {
+        return new JoinValidator(); //이 항목을 수정해서 여러가지 변동 사항 적용가능
+    }
+
+    public JoinService getJoinService(){
+       return new JoinService(memberDao(), joinValidator());
+    }
+
+}
+
+로 수정
+
+
+		멤버조인테스트 이동
+		전체 테스트 실행
+		
+		-성공-
+		
+		모델스멤버를 끌어서 메인 자바로 옮기기
+		벨리데이터도 메인 자바로 옮기기
+		
+		JoinController로 가기
+		
+		 @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        
+        try {
+            ServiceManager manager = new ServiceManager();
+            JoinService service = manager.getJoinService();
+
+            Member member = new Member();
+            member.setUserID(req.getParameter("userId"));
+            member.setUserPw(req.getParameter("userPw"));
+            member.setUserPwRe(req.getParameter("userPwRe"));
+            member.setUserNm(req.getParameter("userNm"));
+
+            service.join(member);
+            //예외가 발생 x -> 회원가입 성공!
+            String url = req.getContextPath() + "/member/login";
+            resp.sendRedirect(url);
+            
+            
+        }catch (RuntimeException e){
+            //검증 실패, 회원가입 실패
+            
+            e.printStackTrace();
+            //html로 인식해서 javaScript를 쓸 수 있게 브라우저에게 알려주는 역할
+            resp.setContentType("text/html; charset=utf-8");
+            PrintWriter out = resp.getWriter();
+            //javaScript와 연동
+            out.printf("<script>alert('%s');</script>", e.getMessage());
+        }
+
+    }
+	
+	로 수정
+	
+	여기까지 하면 서버 실행 가능
+	
+	webapp/WEB-INF/tags/layouts/common으로 이동
+		
+		footer 부분 밑에
+		<footer>
+            <jsp:invoke fragment="footer" />
+        </footer>
+        <iframe name="ifrmProcess" class="dn"></iframe>
+		
+		이렇게 iframe부분 추가
+		
+		webapp/WEB-INF/member/join으로 이동
+		
+		<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<layout:main>
+    <h1>회원가입</h1>
+    <form method="post" action="<c:url value='/member/join' />" target="ifrmProcess" autocomplete="off">
+        <dl>
+            <dt>아이디</dt>
+            <dd>
+                <input type="text" name="userId">
+            </dd>
+        </dl>
+        <dl>
+            <dt>비밀번호</dt>
+            <dd>
+                <input type="password" name="userPw">
+            </dd>
+        </dl>
+         <dl>
+            <dt>비밀번호 확인</dt>
+            <dd>
+                <input type="password" name="userPwRe">
+            </dd>
+         </dl>
+         <dl>
+            <dt>회원명</dt>
+            <dd>
+                <input type="text" name="userNm">
+            </dd>
+         </dl>
+         <div>
+            <input type="checkbox" name="agree" value="1" id="agree">
+            <label for="agree">약관 동의합니다.</label>
+         </div>
+         <button type="submit">가입하기</button>
+    </form>
+</layout:main>
+
+
+수정
+
+
+조인컨트롤러로 이동
+
+@Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.setContentType("text/html; charset=utf-8");
+        PrintWriter out = resp.getWriter();
+        try {
+            ServiceManager manager = new ServiceManager();
+            JoinService service = manager.getJoinService();
+
+            Member member = new Member();
+            member.setUserID(req.getParameter("userId"));
+            member.setUserPw(req.getParameter("userPw"));
+            member.setUserPwRe(req.getParameter("userPwRe"));
+            member.setUserNm(req.getParameter("userNm"));
+
+            service.join(member);
+            //예외가 발생 x -> 회원가입 성공!
+            String url = req.getContextPath() + "/member/login";
+            out.printf("<script>parent.location.replace('%s');</script>", url);
+            //resp.sendRedirect(url);
+
+
+        }catch (RuntimeException e){
+            //검증 실패, 회원가입 실패
+
+            e.printStackTrace();
+            //html로 인식해서 javaScript를 쓸 수 있게 브라우저에게 알려주는 역할
+
+            
+            //javaScript와 연동
+            out.printf("<script>alert('%s');</script>", e.getMessage());
+        }
+
+    }
+	
+	로 수정
+	
+	java에 commons 패키지 추가
+	
+	 commons 패키지에 MessageUtil 클래스 추가
+	 
+	 
+
+
+JoinController이동
+
+resp.setContentType("text/html; charset=utf-8");
+        PrintWriter out = resp.getWriter();
+		제거
+		
+		out.printf("<script>alert('%s');</script>", e.getMessage());
+		out 부분들 제거
+		
+		
+		
+		
+		
+		
+		@Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+
+        try {
+            ServiceManager manager = new ServiceManager();
+            JoinService service = manager.getJoinService();
+
+            Member member = new Member();
+            member.setUserID(req.getParameter("userId"));
+            member.setUserPw(req.getParameter("userPw"));
+            member.setUserPwRe(req.getParameter("userPwRe"));
+            member.setUserNm(req.getParameter("userNm"));
+
+            service.join(member);
+            //예외가 발생 x -> 회원가입 성공!
+            String url = req.getContextPath() + "/member/login";
+
+            //resp.sendRedirect(url);
+
+
+        }catch (RuntimeException e){
+            //검증 실패, 회원가입 실패
+
+            e.printStackTrace();
+            //html로 인식해서 javaScript를 쓸 수 있게 브라우저에게 알려주는 역할
+
+
+            //javaScript와 연동
+            
+        }
+
+    }
+	
+	
+	MessageUtil로 이동
+	
+	
+	public class MessageUtil {
+
+    public static void alertError(Exception e, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html; charset=utf-8");
+        PrintWriter out = response.getWriter();
+        out.printf("<script>alert('%s');</script>", e.getMessage());
+
+    }
+
+}
+
+JoinController이동
+
+@Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+
+        try {
+            ServiceManager manager = new ServiceManager();
+            JoinService service = manager.getJoinService();
+
+            Member member = new Member();
+            member.setUserID(req.getParameter("userId"));
+            member.setUserPw(req.getParameter("userPw"));
+            member.setUserPwRe(req.getParameter("userPwRe"));
+            member.setUserNm(req.getParameter("userNm"));
+
+            service.join(member);
+            //예외가 발생 x -> 회원가입 성공!
+            String url = req.getContextPath() + "/member/login";
+
+            //resp.sendRedirect(url);
+
+
+        }catch (RuntimeException e){
+            //검증 실패, 회원가입 실패
+
+            e.printStackTrace();
+            //html로 인식해서 javaScript를 쓸 수 있게 브라우저에게 알려주는 역할
+            MessageUtil.alertError(e, resp);
+
+            //javaScript와 연동
+
+        }
+
+    }
+	
+	로 수정
+	
+	MessageUtil로 이동
+
+
+public class MessageUtil {
+
+    public static void alertError(Exception e, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html; charset=utf-8");
+        PrintWriter out = response.getWriter();
+        out.printf("<script>alert('%s');</script>", e.getMessage());
+
+    }
+    
+    public static void go(String url, String target, HttpServletResponse response) throws IOException{
+        response.setContentType("text/html; charset=utf-8");
+        PrintWriter out = response.getWriter();
+        out.printf("<script>%s.location.replace('%s');</script>", target, url);
+    }
+    
+    public static void go(String url, HttpServletResponse response)throws IOException{
+        go(url,"self",response);
+    }
+
+}
+
+
+
+JoinController이동
+
+@Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+
+        try {
+            ServiceManager manager = new ServiceManager();
+            JoinService service = manager.getJoinService();
+
+            Member member = new Member();
+            member.setUserID(req.getParameter("userId"));
+            member.setUserPw(req.getParameter("userPw"));
+            member.setUserPwRe(req.getParameter("userPwRe"));
+            member.setUserNm(req.getParameter("userNm"));
+
+            service.join(member);
+            //예외가 발생 x -> 회원가입 성공!
+            String url = req.getContextPath() + "/member/login";
+            MessageUtil.go(url, "parent",resp);
+            //resp.sendRedirect(url);
+
+
+        }catch (RuntimeException e){
+            //검증 실패, 회원가입 실패
+
+            e.printStackTrace();
+            //html로 인식해서 javaScript를 쓸 수 있게 브라우저에게 알려주는 역할
+            MessageUtil.alertError(e, resp);
+
+            //javaScript와 연동
+
+        }
+
+    }
+	
+	로 수정
+	
+	
+	 test/java에 models.member 패키지 생성
+	
+	 models.member 패키지에 LoginService 클래스 생성
+	 
+	 public class LoginService {
+    public void Login(){
+        
+    }
+}
+
+models.member 패키지에 MemberLoginTest 클래스 생성
+
+
+@ExtendWith(MockitoExtension.class)
+public class MemberLoginTest {
+
+    private Member member;
+    private MemberDao memberDao;
+
+    private LoginService service;
+
+    @BeforeEach
+    public void init(){
+        member = new Member();
+        member.setUserID("userab");
+        member.setUserPw("_aA123456");
+        member.setUserNm("사용자01");
+
+        memberDao = new MemberDao();
+        memberDao.register(member);
+
+
+    }
+
+    @Test
+    @DisplayName("로그인 성공하면 예외 없음")
+    public void loginSuccess(){
+        assertDoesNotThrow(() -> {
+
+        });
+
+    }
+
+}
+
+
+
+
+
+
+
+ LoginService로 이동
+ 
+ public class LoginService {
+
+    private MemberDao memberDao;
+    
+    public LoginService(MemberDao memberDao){
+        this.memberDao = memberDao;
+    }
+    public void Login(){
+
+    }
+}
+
+로 수정
+
+
+ServiceManager로 이동
+
+ServiceManager를 테스트 영역으로 이동(models.member)
+
+
+MemberLoginTest 이동
+
+
+@BeforeEach
+    public void init(){
+        member = new Member();
+        member.setUserID("userab");
+        member.setUserPw("_aA123456");
+        member.setUserNm("사용자01");
+
+        memberDao = new MemberDao();
+        memberDao.register(member);
+
+        service = new ServiceManager().getLoginService();
+    }
+	
+로 수정
+
+ LoginService이동
+ 
+ public void Login(HttpServletRequest request){
+        
+    }
+	로 수정
+	
+	
+	
+	MemberLoginTest이동
+	
+	@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
+public class MemberLoginTest {
+
+    private Member member;
+    private MemberDao memberDao;
+
+    private LoginService service;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @BeforeEach
+    public void init(){
+        member = new Member();
+        member.setUserID("userab");
+        member.setUserPw("_aA123456");
+        member.setUserNm("사용자01");
+
+        memberDao = new MemberDao();
+        memberDao.register(member);
+
+        service = new ServiceManager().getLoginService();
+		//모의객체
+        given(request.getParameter("userId")).willReturn(member.getUserID());
+        given(request.getParameter("userPw")).willReturn(member.getUserPw());
+
+
+    }
+
+    @Test
+    @DisplayName("로그인 성공하면 예외 없음")
+    public void loginSuccess(){
+        
+
+
+        assertDoesNotThrow(() -> {
+            service.Login(request);
+
+        });
+
+    }
+
+}
+로 수정
+
+ServiceManager를 main/java/member로 옮김
+LoginService를 main/java/member 로 옮김
+
+
+MemberLoginTest이동
+
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
+public class MemberLoginTest {
+
+    private Member member;
+    private MemberDao memberDao;
+
+    private LoginService service;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @BeforeEach
+    public void init(){
+        member = new Member();
+        member.setUserID("userab");
+        member.setUserPw("_aA123456");
+        member.setUserNm("사용자01");
+
+        memberDao = new MemberDao();
+        memberDao.register(member);
+
+        service = new ServiceManager().getLoginService();
+
+
+    }
+
+    private void createCorrectData(){
+        //모의객체. 데이터가 정상적으로 일치한 경우 가정하는 모의객체
+        given(request.getParameter("userId")).willReturn(member.getUserID());
+        given(request.getParameter("userPw")).willReturn(member.getUserPw());
+    }
+
+    private void createParamDate(String userId, String userPw){
+        //모의객체. 데이터를 임의로 변조할수 있는 모의객체
+        given(request.getParameter("userId")).willReturn(userId);
+        given(request.getParameter("userPw")).willReturn(userPw);
+    }
+
+    @Test
+    @DisplayName("로그인 성공하면 예외 없음")
+    public void loginSuccess(){
+        assertDoesNotThrow(() -> {
+            service.Login(request);
+
+        });
+    }
+
+    @Test
+    @DisplayName("필수 항목 체크 userId, userPw 검증 - BadRequestException")
+    public void dataValidation1(){
+        createParamDate(null, null);
+
+        assertThrows(BadRequestException.class, () -> {
+            service.Login(request);
+
+        });
+    }
+
+}
+로 수정,
+dataValidation1 실행
+
+-실패-
+
+
+main/java/member에서 LoginValidator 클래스 생성
+
+public class LoginValidator implements Validator<HttpServletRequest> {
+    @Override
+    public void check(HttpServletRequest request) {
+
+    }
+}
+
+
+LoginService로 이동
+
+public class LoginService {
+
+    private MemberDao memberDao;
+
+    private Validator validator;
+
+    public LoginService(MemberDao memberDao, Validator validator){
+        this.memberDao = memberDao;
+        this.validator = validator;
+    }
+    public void Login(HttpServletRequest request){
+
+    }
+}
+
+로 수정
+
+
+
+
+ServiceManager 로 이동
+
+public class ServiceManager {
+
+    public MemberDao memberDao(){
+        return new MemberDao();
+    }
+
+    public Validator joinValidator() {
+        return new JoinValidator(); //이 항목을 수정해서 여러가지 변동 사항 적용가능
+    }
+    
+    public Validator loginValidator(){
+        return new LoginValidator();
+    }
+
+    public JoinService getJoinService(){
+       return new JoinService(memberDao(), joinValidator());
+    }
+
+    public LoginService getLoginService(){
+        return new LoginService(memberDao(), loginValidator());
+    }
+
+}
+
+로 수정
+
+LoginService로 이동
+
+
+public void Login(HttpServletRequest request){
+        //로그인 유효성 검사
+        validator.check(request);
+    }
+	
+	부분 수정
+	
+	
+	LoginValidator로 이동
+	
+	  @Override
+    public void check(HttpServletRequest request) {
+
+        String userId = request.getParameter("userId");
+        String userPw = request.getParameter("userPw");
+            /*필수 데이터 검증 - userId, userPw*/
+
+        requiredCheck(userId, new BadRequestException("아이디를 입력하세요."));
+        requiredCheck(userPw, new BadRequestException("비밀번호를 입력하세요."));
+    }
+	추가
+	
+	
+MemberLoginTest로 이동
+
+
+ @Test
+    @DisplayName("필수 항목 체크 userId, userPw 검증 - BadRequestException")
+    public void dataValidation1(){
+
+        //userId 필수항목 체크
+        assertThrows(BadRequestException.class, () -> {
+            createParamDate(null, null);
+            service.Login(request);
+
+        });
+
+        //userPw 필수항목 체크
+        assertThrows(BadRequestException.class, () -> {
+            createParamDate(member.getUserID(), null);
+            service.Login(request);
+
+        });
+    }
+	로 부분 수정
+	
+	추가
+	
+	@Test
+    @DisplayName("아이디가 등록되지 않은 회원이면 MemberNotFoundException 발생 검증")
+    public void dataValidation2(){
+
+    }
+	
+	main/java/member에서  MemberNotFoundException 클래스 생성
+	
+	public class MemberNotFoundException extends RuntimeException{
+    public MemberNotFoundException(){
+        super("등록되지 않은 회원입니다.");
+    }
+}
+
+MemberLoginTest 이동
+
+@Test
+    @DisplayName("아이디가 등록되지 않은 회원이면 MemberNotFoundException 발생 검증")
+    public void dataValidation2(){
+        assertThrows(MemberNotFoundException.class, () -> {
+            createParamDate("wrongid", member.getUserPw());
+			service.Login(request);
+        });
+    }
+	
+	부분수정
+	
+	
+	LoginValidator로 이동
+	
+	private MemberDao memberDao;
+    
+    @Override
+    public void check(HttpServletRequest request) {
+
+        String userId = request.getParameter("userId");
+        String userPw = request.getParameter("userPw");
+            /*필수 데이터 검증 - userId, userPw*/
+
+        requiredCheck(userId, new BadRequestException("아이디를 입력하세요."));
+        requiredCheck(userPw, new BadRequestException("비밀번호를 입력하세요."));
+        
+            /*등록된 아이디인지 체크 - memberDao */
+    }
+    
+    public void setMemberDao(MemberDao memberDao){
+        this.memberDao = memberDao;
+    }
+
+수정
+
+ServiceManager로 이동
+
+
+public class ServiceManager {
+
+    public MemberDao memberDao(){
+        return new MemberDao();
+    }
+
+    public Validator joinValidator() {
+        return new JoinValidator(); //이 항목을 수정해서 여러가지 변동 사항 적용가능
+    }
+
+    public Validator loginValidator(){
+        LoginValidator validator = new LoginValidator();
+        validator.setMemberDao(memberDao());
+        return validator;
+    }
+
+    public JoinService getJoinService(){
+       return new JoinService(memberDao(), joinValidator());
+    }
+
+    public LoginService getLoginService(){
+        return new LoginService(memberDao(), loginValidator());
+    }
+
+}
+
+로 수정
+
+
+LoginValidator 이동
+
+  @Override
+    public void check(HttpServletRequest request) {
+
+        String userId = request.getParameter("userId");
+        String userPw = request.getParameter("userPw");
+            /*필수 데이터 검증 - userId, userPw*/
+
+        requiredCheck(userId, new BadRequestException("아이디를 입력하세요."));
+        requiredCheck(userPw, new BadRequestException("비밀번호를 입력하세요."));
+
+            /*등록된 아이디인지 체크 - memberDao */
+        Member member = memberDao.get(userId);
+        if(member == null){ //등록된 회원이 아니라면..
+            throw new MemberNotFoundException();
+        }
+
+
+    }
+	
+	로 수정
+	
+	
+	
+
+ MemberLoginTest이동
+
+
+ dataValidation2() 테스트 실행
+ 
+ -성공-
+ 
+  MemberLoginTest에서
+  
+  
+  @Test
+    @DisplayName("비밀번호가 일치하지 않는 경우 검증 - BadRequestException")
+    public void dataValidation3() {
+
+        assertThrows(BadRequestException.class, () ->{
+           createParamDate(member.getUserID(), "12345");
+           service.Login(request);
+        });
+
+    }
+	
+	
+	추가
+	
+	LoginValidator 이동
+
+	
+            /*등록된 아이디인지 체크 - memberDao */
+        Member member = memberDao.get(userId);
+        if(member == null){ //등록된 회원이 아니라면..
+            throw new MemberNotFoundException();
+        }
+
+            /*비밀번호 일치여부 체크*/
+        if(!member.getUserPw().equals(userPw)){
+            throw new BadRequestException("비밀번호가 일치하지 않습니다.");
+        }
+
+	부분수정
+	
+	MemberLoginTest로 이동
+	
+	dataValidation3() 실행
+	
+	성공(password부분을 member.getUserPw()로 바꾸면 테스트 실패로 성공적인 결과)
+	
+	MemberLoginTest 전체 테스트 실행
+	
+	
+	LoginService 이동
+	
+	public void Login(HttpServletRequest request){
+        //로그인 유효성 검사
+        validator.check(request);
+
+        //로그인 처리
+        String userId = request.getParameter("userId");
+        Member member = memberDao.get(userId);
+		
+		HttpSession session = request.getSession();
+        session.setAttribute("member", member);
+    }
+	
+	부분수정
+	
+	
+	LoginController로 이동
+	
+	 @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try{
+            ServiceManager manager = new ServiceManager();
+            LoginService service = manager.getLoginService();
+
+            service.Login(req);
+            
+        } catch (RuntimeException e){
+            e.printStackTrace();
+            MessageUtil.alertError(e, resp);
+        }
+       
+    }로 수정
+	
+	맨 윗부분의 import commons.Message를
+	import static commons.MessageUtil.*;로 수정
+	
+	
+	
+	login.jsp로 이동해서
+	<form method="post" action="<c:url value='/member/login' />" target="ifrmProcess" autocomplete="off">
+	부분 수정
+	
+	index.jsp로 이동
+	
+	<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts"%>
+<layout:main>
+    <c:if test="${member == null}">
+        <a href="<c:url value='/member/join'/>">회원가입</a>
+        <a href="<c:url value='/member/login'/>">로그인</a>
+    </c:if>
+
+     <c:if test="${member != null}">
+            ${member.userNm}(${member.userId})님 로그인...
+            <a href="<c:url value='/member/logout'/>">로그아웃</a>
+        </c:if>
+
+</layout:main>
+
+로 수정
+
+controllers.members 패키지로 이동해서 LogoutController 클래스 생성
+
+@WebServlet("/member/logout")
+public class LogoutController extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        session.invalidate(); //세션 비우기
+        resp.sendRedirect(req.getContextPath() + "/member/login");
+    }
+}
+
+
+LoginController로 이동
+
+
+	 @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try{
+            ServiceManager manager = new ServiceManager();
+            LoginService service = manager.getLoginService();
+
+            service.Login(req);
+
+            //아이디 저장 있으면 쿠키 저장 (1년간)
+            String saveId = req.getParameter("saveId");
+            String userId = req.getParameter("userId");
+            Cookie cookie = new Cookie("saveId", userId);
+            if(saveId != null){ //아이디 저장을 체크한 경우
+                cookie.setMaxAge(60*60*24*365);
+            } else { //체크 안되어 있는 경우는 쿠키 삭제
+                cookie.setMaxAge(0);
+            }
+            resp.addCookie(cookie);
+
+            //로그인 성공 -> 메인페이지로 이동
+            String url = req.getContextPath();
+            go(url, "parent", resp);
+
+        } catch (RuntimeException e){
+            e.printStackTrace();
+            MessageUtil.alertError(e, resp); //실패시 -> 에러 출력
+        }
+
+    }
+	
+	로 수정
+	
+	login.jsp이동
+	
+	<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<layout:main>
+    <h1>로그인</h1>
+    <form method="post" action="<c:url value='/member/login' />" target="ifrmProcess" autocomplete="off">
+        <dl>
+            <dt>아이디</dt>
+            <dd>
+                <input type="text" name="userId" value="${cookie.saveId !=null ? cookie.savaId.value : ''} ">
+            </dd>
+        </dl>
+        <dl>
+            <dt>비밀번호</dt>
+            <dd>
+                <input type="password" name="userPw">
+            </dd>
+            <div>
+                <input type="checkbox" name="saveID" value="1" id="saveId"${cookie.saveId != null ? 'checked' : ''}>
+                <label for="saveId">아이디 저장</label>
+            </div>
+            <button type="submit">로그인</button>
+        </dl>
+</layout:main>로 수정함
+
+
+	
+	
+	
+	

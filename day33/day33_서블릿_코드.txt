@@ -1,0 +1,242 @@
+=============web.xml================
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+
+    <servlet>
+        <servlet-name>helloServlet</servlet-name>
+        <servlet-class>servlets.HelloServlet</servlet-class>
+        <init-param>
+            <param-name>param1</param-name>
+            <param-value>param1</param-value>
+        </init-param>
+        <init-param>
+            <param-name>param2</param-name>
+            <param-value>param2</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>helloServlet</servlet-name>
+        <url-pattern>/hello/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>
+====================================
+
+=================pom.xml===========================
+project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.koreait</groupId>
+  <artifactId>day04</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>Archetype - day04</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>19</maven.compiler.source>
+    <maven.compiler.target>19</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-api -->
+    <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>javax.servlet.jsp-api</artifactId>
+      <version>2.3.3</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.26</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.9.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.9.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.2.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>5.2.0</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <finalName>day01_2</finalName>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
+=============================================================
+
+===================java\servlets\HelloServlet=========================
+package servlets;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class HelloServlet extends HttpServlet {
+
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+       String param1 = config.getInitParameter("param1");
+       String param2 = config.getInitParameter("param2");
+       System.out.printf("param1=%s, param2=%s%n",param1,param2);
+    }
+
+    @Override
+    public void destroy() {
+        System.out.println("Destroy");
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("doGet");
+        // /hello/path1
+        // /단위로 쪼갠다
+        String url = req.getRequestURI();
+        String path = url.substring(url.lastIndexOf("/"));
+        System.out.println(path);
+        //분기 생성
+        if(path.contains("path1")){
+            doPath1(req, resp);
+        } else if (path.contains("path2")) {
+            doPath2(req, resp);
+        } else
+
+        //헤더를 json으로 인식하기 때문에, html 문법을 사용하지 않게 된다.
+        //resp.setContentType("application/json");
+        //헤더를 html로 인식한다. html 문법을 인식하게 된다.
+        //resp.setContentType("text/html");
+
+
+
+        //헤더를 UTF-8로 인식하게 한다.
+        //resp.setCharacterEncoding("UTF-8");
+
+        //한꺼번에 정의 할 수 있다.
+        resp.setContentType("text/html; charset=UTF-8");
+
+        PrintWriter out = resp.getWriter();
+        //?????!로 한글이 깨져서 보인다! header가 ISO-....로 되어있기 때문
+
+        out.println("<form method='post' action='hello'>");
+        out.println("<input type='text' name='subject'>");
+        out.println("<textarea name='content'></textarea>");
+        out.println("<button type='submit'>작성</button>");
+        out.println("</form>");
+    }
+
+    private void doPath1(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+            IOException{
+        PrintWriter out = resp.getWriter();
+        out.println("<h1>Path1</h1>");
+    }
+
+    private void doPath2(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+            IOException{
+        PrintWriter out = resp.getWriter();
+        out.println("<h1>Path2</h1>");
+
+    }
+
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //요청 바디에 대한 인코딩. 서버에게 알려주어야 한다
+        req.setCharacterEncoding("UTF-8"); //요청 데이터에 대한 인코딩
+       String subject = req.getParameter("subject");
+       String content = req.getParameter("content");
+       System.out.printf("subject : %s%n", subject);
+       System.out.printf("content : %s%n", content);
+    }
+
+
+
+
+}
+=================================================================
+
+===================java\servlets\BoardServlet=========================
+
+package servlets;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+@WebServlet("/board")
+public class BoardServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+       resp.setContentType("text/html; charset=utf-8");
+        PrintWriter out = resp.getWriter();
+        out.println("<h1>게시판!<h1>");
+    }
+}
+====================================================================
+
+
+

@@ -1,0 +1,533 @@
+과정정리
+
+
+src 우클릭 디렉토리생성
+src -> main -> webapp
+
+src -> main -> webapp -> META-INF
+
+
+src -> main -> webapp -> WEB-INF
+
+
+
+의존성 추가
+
+<dependencies>안에 집어넣기
+
+
+javax.servlet-api
+JavaServer Pages(TM) API(javax.servlet.jsp-api)
+JSTL(1.2 버전)
+JUnit Jupiter API
+JUnit Jupiter (Aggregator)
+Mockito Core 
+Mockito JUnit Jupiter
+Project Lombok
+
+
+ <build>
+    <plugins>
+      <plugin> 안에 집어넣기
+	  Maven Surefire Plugin (<groupId>와 <artifactId>, <version>까지만 복사)
+	  
+
+
+
+전부 넣은 후  우측상단 maven -> 새로고침 버튼
+
+컴파일 버튼 눌러서
+
+smart Tomcat
+
+tomcat9
+디플로이먼트
+
+콘텍스트 패스 /project로 수정
+
+
+webapp에 index.jsp 생성
+
+
+java에 controllers 패키지 생성
+java에 models 패키지 생성
+
+java에 controllers 를 controllers.members 로 이름 변경
+
+controllers.members에 클래스 생성 LoginController, JoinController
+
+JoinController에 HttpServlet 상속 @WebServlet("/member/join") 애노태이션 부착
+doget, dopost 오버라이드
+
+LoginController에 HttpServlet 상속 @WebServlet("/member/login") 애노태이션 부착
+doget, dopost 오버라이드
+
+webapp에 member 디렉토리 생성
+member에 join.jsp 생성
+member에 login.jsp 생성
+
+JoinController에 슈퍼 제거
+RequestDispatcher rd = req.getRequestDispatcher("/member/join.jsp");
+        rd.forward(req, resp);
+		
+LoginController에 슈퍼 제거
+ RequestDispatcher rd = req.getRequestDispatcher("/member/login.jsp");
+        rd.forward(req, resp);
+		
+java에 filters 패키지 생성
+filters 패키지에 CommonFilter 클래스 생성 import javax.servlet.Filter; 임플리먼트
+doFilter오버라이드
+filterChain.doFilter(servletRequest, servletResponse);
+
+filters 패키지에 CommonRequestWrapper 클래스생성
+extends HttpServletRequestWrapper
+
+생성자 생성
+
+public CommonRequestWrapper(HttpServletRequest request) {
+        super(request);
+		
+		String method = request.getMethod().toUpperCase();
+        if(method.equals("POST")){
+            try {
+                request.setCharacterEncoding("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+		
+    }
+	
+	WEB-INF 내에 web.xml 생성
+	
+	<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" 
+xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                       
+http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+
+    <filter>
+        <filter-name>commonFilter</filter-name>
+        <filter-class>filters.CommonFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>commonFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+</web-app>
+
+WEB-INF 내에 tags 디렉토리 생성
+tags 내에 layouts 디렉토리 생성
+layouts 내에 common.tag 생성
+
+<%@ attribute name="footer" fragment="true" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>연습!</title>
+        <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
+        <script src="<c:url value='/js/common.js' />"></script>
+    </head>
+
+    <body>
+        <header>
+            <jsp:invoke fragment="header" />
+        </header>
+        <main>
+               <jsp:doBody />
+        </main>
+        <footer>
+            <jsp:invoke fragment="footer" />
+        </footer>
+
+
+    </body>
+</html>
+
+layouts 내에 main.tag 생성
+
+<%@ tag body-content="scriptless" pageEncoding="UTF-8" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<layout:common>
+    <jsp:attribute name="header">
+        <h1>사이트 상단</h1>
+    </jsp:attribute>
+    <jsp:attribute name="footer">
+            <h1>사이트 하단</h1>
+    </jsp:attribute>
+    <jsp:body>
+        <jsp:doBody />
+    </jsp:body>
+</layout:common>
+
+join.jsp
+
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<layout:main>
+    <h1>회원가입</h1>
+    <form method="post" action="<c:url value='/member/join' />">
+        <dl>
+            <dt>아이디</dt>
+            <dd>
+                <input type="text" name="userId">
+            </dd>
+        </dl>
+        <dl>
+            <dt>비밀번호</dt>
+            <dd>
+                <input type="password" name="userPw">
+            </dd>
+        </dl>
+         <dl>
+            <dt>비밀번호 확인</dt>
+            <dd>
+                <input type="password" name="userPwRe">
+            </dd>
+         </dl>
+         <dl>
+            <dt>회원명</dt>
+            <dd>
+                <input type="text" name="userNm">
+            </dd>
+         </dl>
+         <div>
+            <input type="checkbox" name="agree" value="1" id="agree">
+            <label for="agree">약관 동의합니다.</label>
+         </div>
+         <button type="submit">가입하기</button>
+    </form>
+</layout:main>
+
+
+login.jsp
+
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<layout:main>
+    <h1>로그인</h1>
+    <form method="post" action="<c:url value='/member/login' />">
+        <dl>
+            <dt>아이디</dt>
+            <dd>
+                <input type="text" name="userId">
+            </dd>
+        </dl>
+        <dl>
+            <dt>비밀번호</dt>
+            <dd>
+                <input type="password" name="userPw">
+            </dd>
+            <div>
+                <input type="checkbox" name="saveID" value="1" id="saveId">
+                <label for="saveId">아이디 저장</label>
+            </div>
+            <button type="submit">로그인</button>
+        </dl>
+</layout:main>
+
+
+테스트
+
+test/java
+models.member 패키지 생성
+JoinService 클래스 생성
+
+public class JoinService {
+
+    public void join(Member member){
+
+    }
+
+    
+}
+
+
+여기까지 쓴 후 Member 클래스 생성
+
+import lombok.Data;
+
+
+@Data //@Getter @Setter @EqualsAndHashCode, @RequiredArgsConstructor, @ToString
+public class Member {
+    private String userID;
+    private String userPw;
+    private String userPwRe;
+    private String userNm;
+
+    private boolean agree;
+
+}
+
+tests 패키지 생성
+MemberJoinTest 클래스 생성
+
+@ExtendWith(MockitoExtension.class)
+public class MemberJoinTest {
+    @Test
+    @DisplayName("회원 가입에 성공하면 예외가 발생하지 않음")
+    public void joinSuccess(){
+        Member member = new Member();
+        JoinService service = new JoinService();
+        assertDoesNotThrow(()->{
+            service.join(member);
+        });
+    }
+
+MemberJoinTest 에서
+
+
+@ExtendWith(MockitoExtension.class)
+public class MemberJoinTest {
+
+    private Member member;
+	
+	   private JoinService service;
+
+    @BeforeEach
+    public void init() {
+        joinService = new service();
+		member = new Member();
+    }
+
+
+    @Test
+    @DisplayName("회원 가입에 성공하면 예외가 발생하지 않음")
+    public void joinSuccess(){
+        Member member = new Member();
+        JoinService service = new JoinService();
+        assertDoesNotThrow(()->{
+            service.join(member);
+        });
+    }
+
+
+}
+까지 추가  @BeforeEach(테스트 전 항상 실행)
+
+
+
+수정
+
+
+@ExtendWith(MockitoExtension.class)
+public class MemberJoinTest {
+
+    private Member member;
+    private JoinService service;
+
+    @BeforeEach
+    public void init() {
+        service = new JoinService();
+        member = new Member();
+        member.setUserID("user01");
+        member.setUserPw("12345678");
+        member.setUserPwRe("12345678");
+        member.setUserNm("사용자01");
+        member.setAgree(true);
+    }
+
+
+    @Test
+    @DisplayName("회원 가입에 성공하면 예외가 발생하지 않음")
+    public void joinSuccess(){
+
+        assertDoesNotThrow(()->{
+            service.join(member);
+        });
+    }
+
+    @Test
+    @DisplayName("Join 메서드 null값이 들어가면 BadRequestException 발생")
+    public void dataValidation1(){
+
+    }
+
+
+}
+
+models.member 에 BadRequestException 클래스 생성
+
+public class BadRequestException extends RuntimeException{
+    
+    public BadRequestException(String message){
+        super(message);
+    }
+    
+}
+
+멤버조인테스트로 복귀
+
+
+
+@Test
+    @DisplayName("Join 메서드 null값이 들어가면 BadRequestException 발생")
+    public void dataValidation1(){
+        assertThrows(BadRequestException.class, () -> {
+           service.join(null);
+        });
+    }
+	
+	까지 넣고 테스트 수행 -> 실패나옴
+	
+	
+	
+	조인서비스로 이동
+	
+public class JoinService {
+
+    public void join(Member member){
+        if(member == null){
+            throw new BadRequestException("잘못된 접근입니다.");
+        }
+    }
+
+
+}
+로 코드 수정
+
+멤버조인테스트로 이동
+
+
+데이터벨리데이션 테스트 다시 실행 -> 성공
+
+
+@Test
+    @DisplayName("필수 항목 체크 - userId, userPw, userPwRe, userNm, 실패시 BadRequestException ")
+    public void dataValidation2(){
+        assertThrows(BadRequestException.class, () ->{
+            Member member = new Member();
+            service.join(member);
+
+
+        });
+
+    }
+	추가
+	
+	
+
+test에 validators 패키지 추가
+
+인터페이스 추가
+public interface Validator<T> {
+    void check(T t);
+    
+    
+    
+}
+
+인터페이스 추가
+public interface RequiredValidator {
+
+    default void requiredCheck(String value, RuntimeException e){
+        if(value == null || value.isBlank()){
+            throw e;
+        }
+    }
+
+}
+
+모델스멤버 패키지에 JoinValidator 클래스 생성
+
+public class JoinValidator implements Validator<Member>, RequiredValidator {
+    @Override
+    public void check(Member member) {
+
+    }
+
+}
+
+현재 멤버조인서비스는 벨리데이터를 의존중.
+
+의존하는것은 수정 ,업데이트가 될 가능성이 많음
+그렇기 때문에 외부에서 주입받는 형식이 적절함.
+
+의존성 주입
+
+수정
+public class JoinService {
+
+    private Validator validator = new JoinValidator();
+
+    public void join(Member member){
+        if(member == null){
+            throw new BadRequestException("잘못된 접근입니다.");
+        }
+    }
+
+    public void setValidator(Validator validator){
+        this.validator = validator;
+    }
+
+
+}
+
+멤버조인테스트로 이동, init 수정
+
+@BeforeEach
+    public void init() {
+        service = new JoinService();
+        service.setValidator(new JoinValidator());
+        member = new Member();
+        member.setUserID("user01");
+        member.setUserPw("12345678");
+        member.setUserPwRe("12345678");
+        member.setUserNm("사용자01");
+        member.setAgree(true);
+    }
+
+
+
+의존성 관리의 예시
+https://github.com/yonggyo1125/board_jsp-11-/blob/master/main/java/models/member/MemberServiceManager.java
+
+클래스 하나에서 끌어오는 형식으로 여러가지 기능들을 구현하는 데 필요한 자원으로 사용한다.
+즉, 클래스 하나만 바꿈으로써 수정 사항을 수많은 기능들에 한꺼번에 반영할 수 있게, 의존성을 설계해서 이용했다.
+
+문어머리...문어발 구조....라고 생각하기...
+
+스프링-> 의존 주입 구조에서 착안
+
+캡슐화..중요...
+
+models.member에 ServiceManager 클래스 생성
+
+public class ServiceManager {
+
+    public Validator joinValidator() {
+        return new JoinValidator(); //이 항목을 수정해서 여러가지 변동 사항 적용가능
+    }
+
+    public JoinService getJoinService(){
+        JoinService service = new JoinService();
+        service.setValidator(joinValidator()); //여기도..
+        return service;
+    }
+
+}
+
+멤버조인테스트로 이동
+
+@BeforeEach
+    public void init() {
+        ServiceManager manager = new ServiceManager();
+        service = manager.getJoinService();
+
+        member = new Member();
+        member.setUserID("user01");
+        member.setUserPw("12345678");
+        member.setUserPwRe("12345678");
+        member.setUserNm("사용자01");
+        member.setAgree(true);
+    }
+로 수정
+
+변수로 주입받지 않고, 메서드로 주입받게 한다.
+
+//0330, 미완성, 내일 마무리

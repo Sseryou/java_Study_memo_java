@@ -1,0 +1,124 @@
+스트림
+
+바이트기반 스트림
+1.InputStream
+	기반 스트림
+	-ByteArrayInputstream
+	-FileInputStream
+	
+	보조 스트림
+	-FilterInputStream
+		-BufferedInputStream : 버퍼 (기본 - 8kb)
+		-DataInputStream : 기본 자료형
+			(DataInput...)
+		-ObjectInputStream : 객체를 읽을때
+
+	
+2.OutputStream
+	기반 스트림
+		ByteOutputStream
+		
+		FileOutputStream
+
+	보조 스트림
+	-FilterOutputStream
+		-BufferedOutputStream : 버퍼(기본 8kb)
+		-DataOutputStream : 기본자료형
+
+	-ObjectOutputStream : 객체 -> 파일(기타) 저장
+
+		객체(인스턴스 변수)★ -> 문자열 변환(직렬화) -파일 저장
+		직렬화 : 어떤 객체의 데이터를 문자로 일렬화 시키는것
+
+	파일로 저장하는 데이터 - 객체를 다시 복구할때 필요한 데이터만 저장 (인스턴스 변수 저장)
+	클래스 -> 로더 -> 메서드, 정적 자원, 상수 -> 공유	
+
+	객체의 인스턴스 변수 -> 문자열 형태 -> 파일로 저장 (직렬화)
+
+	민감한 작업
+	-변수의 값 -> 파일 저장하면 노출
+	- 저장된 파일 다른 장소에서 복구 O
+	- implements Serializable
+
+	java.io.Serializable	인터페이스 = 정의된 추상메서드 X, 빈 인터페이스
+		-작업에 대한 동의에 대한 의미(마커 인터페이스)
+
+	List
+	Map
+
+	직렬화 배제 -> transient
+
+문자기반 스트림
+
+1.Reader (입력 스트림)
+	기반 스트림
+	CharArrayReader
+	StringReader
+
+	FileReader
+
+	보조 스트림
+		BufferedReader : 버퍼(기본 8kb)
+
+2.Writer (출력 스트림)
+	기반 스트림
+	CharArrayWriter
+	StringWriter
+
+	FileWriter(뒤에 true를 정하게 되면 기존 내용을 삭제하지 않고 추가로 기록, 로그기록 할때 쓰임)
+
+	보조 스트림
+	BufferedWriter
+
+예) 바이트기반 입력, 출력 스트림밖에 안되는 경우 -> 한글 깨짐 발생
+바이트기반 -> 문자단위 스트림
+입력 스트림
+	InputStreamReader
+
+출력 스트림
+	OutputStreamWriter
+
+
+표준 입출력
+1. 표준입출력 (StdIn, StdOut)
+
+1) System.in : InputStream - 콘솔에서 바이트 단위로 읽기
+2) System.out : PrintStream - 글자색이 검은색
+		(문자 단위 스트림, PrintWriter)
+
+3) System.err : PrintStream - 글자색이 빨간색
+
+	System
+		setIn(InputStream in) : 입력스트림 변경
+		setOut(PrintStream out) : 출력스트림 변경
+		setErr(PrintStream err) : 출력스트림 변경
+
+
+2. File
+	-파일과 디렉토리를 다루는데 필요한 기능이 정의됨
+	-파일, 디렉토리 정리, 조회(경로, 파일명, ... , 파일 목록)
+	-생성
+		-파일 생성, 디렉토리 생성
+	-삭제
+		...
+
+	윈도우즈
+		C:\폴더\파일...
+
+	맥, 리눅스
+		/폴더/파일
+
+	File
+		separator : 디렉토리 구분자(윈도우즈 : \, 리눅스 : /)
+		pathSeparator : 환경 변수 구분자(윈도우즈 - ; , 리눅스 - :)
+
+	
+
+
+
+
+
+
+
+
+

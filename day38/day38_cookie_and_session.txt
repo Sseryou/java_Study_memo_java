@@ -1,0 +1,54 @@
+Cookie
+	응답 헤더(Set-Cookie: ...)
+	브라우저가 저장
+	요청시 헤더(cookie)
+	서버가 조회
+
+	- 보안에 취약
+	
+	쿠키 등록 메서드
+	HttpServletResponse
+		addCookie(Cookie cookie)
+		
+	쿠키 조회 메서드
+	HttpServletRequest
+		Cookie[] getCookies()
+		
+	Cookie = new Cookie("이름", "값");
+	
+	setDomain
+	getDomain
+	setPath
+	getPath
+	
+	setMaxAge(초 ....)
+					60 * 60 * 24 * 7
+					
+	setMaxAge(0) : 쿠키 삭제
+
+Session
+	- 개인화된 데이터 서버에 저장
+	- 브라우저별 구분 SESSION ID가 쿠키로 저장
+	- 서버에서 조회
+	
+HttpSession 
+	- void setAttribute(String name, Object value)
+	- Object getAttribute(String name);
+	- void removeAttribute(String name);
+	
+EL식 변수 바로 접근
+${...}
+${sessionScope. ...}
+
+HttpServletRequest
+	HttpSession getSession()
+
+// JSP	페이지 - session 내장 객체
+
+PageContext
+	HttpSession getSession()
+
+세션 비우기
+	invalidate()
+	
+	

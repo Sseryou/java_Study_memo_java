@@ -1,0 +1,47 @@
+익스프레션 언어(EL 표현식)
+-EL (Expression Language) - 표현식
+${... 식 ...}
+	-속성값(변수), 연산식, 간단한 메서드 호출
+	
+	- ex) num1 : ${num1} <br>
+			num2 : ${num2} <br>
+
+			num1 + num2 : ${num1 + num2} <br>
+			
+1. 익스프레션 언어의 기초문법
+
+2. 익스프레션 언어의 내장 객체
+
+param.이름
+
+request.getParameter
+	-요청 데이터는 메서드 상관없이 접근
+	
+paramValues
+
+
+마침표(.)
+대괄호 연산자([]) : 숫자, 단어
+
+
+
+익스프레션 언어의 연산자
+
+1. 익스프레션 언어의 연산자
+div - 나눈 몫(/)
+mod - 나머지(%)
+
+lt - lesser then -> <
+gt - greater then -> >
+le - lesser then equal -> <=
+ge - greater then equal -> >=
+eq - equal -> ==
+ne - not equal -> !=
+
+2. 엠프티 연산자
+3. 대괄호 연산자와 마침표 연산자
+
+			
+	
+			
+			

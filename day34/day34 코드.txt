@@ -1,0 +1,71 @@
+---------------------index.jsp-----------------------------------
+<%@ page contentType= "text/html; charset=utf-8"%>
+<%
+    out.print("<h1>안녕하세요!</h1>");
+
+    //String str = null;
+    //str.toUppercase();
+
+%>
+
+-----------------------------------------------------------------
+
+---------------------ex01.jsp-----------------------------------
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page info="JSP 연습!"%>
+<%@ page import="java.util.*", "java.util.stream.*"%>
+<%@ page import="java.util.stream.*"%>
+<%
+    List<String> names = Arrays.asList("이름1", "이름2", "이름3");
+    Stream<String> stm = names.stream();
+%>
+-----------------------------------------------------------------
+
+---------------------ex02.jsp-----------------------------------
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page info="JSP 연습"%>
+<%
+    out.print(getServletInfo());
+%>
+-----------------------------------------------------------------
+
+---------------------ex03.jsp-----------------------------------
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page errorPage="error.jsp"%>
+
+<%
+    String str = null;
+    str.toUpperCase();
+
+-----------------------------------------------------------------
+
+---------------------ex04.jsp-----------------------------------
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page inELIgnored="true"%>
+${10+20}
+-----------------------------------------------------------------
+
+---------------------ex05.jsp-----------------------------------
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ include file="header.jsp"%>
+<h1>본문<h1>
+<%@ include file="footer.jsp"%>
+-----------------------------------------------------------------
+
+---------------------ex06.jsp-----------------------------------
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:forEach var="num" begin="1" end="10">
+    ${num} <br>
+    </c:forEach>
+-----------------------------------------------------------------
+
+---------------------footer.jsp-----------------------------------
+<%@ page contentType="text/html; charset=utf-8" %>
+<h1>푸터!</h1>
+-----------------------------------------------------------------
+
+---------------------header.jsp-----------------------------------
+<%@ page contentType="text/html; charset=utf-8" %>
+<h1>헤더!</h1>
+-----------------------------------------------------------------

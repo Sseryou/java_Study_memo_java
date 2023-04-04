@@ -1,0 +1,254 @@
+응용보다는, 명확한 개념의 이해가 먼저이다.
+기본기가 제일 중요하다.
+
+컴파일러가 자동 추가
+1. java.lang
+2. extend object
+3. 기본 생성자
+4. 인터페이스
+	-public abstract 추상메서드
+	-public static final 정적상수
+5. 지역변수
+ 지역 내부 객체의 메서드가 사용중일때 자동 상수화
+
+
+
+java.lang 패키지
+
+Object 클래스
+
+1. toString() 메서드
+public String toString() {
+        return getClass().getName() + "@" + Integer.toHexString(hashCode());
+    }
+
+클래스명.이름 @ HashCode
+
+
+toString은 재정의로 많이 사용한다.
+기본값은 클래스명.변수명 @ 16진수 주소를 뱉기 때문에,
+오버라이딩으로 재정의하여 다른 내용이 나올수 있게 한다.
+
+
+
+2. equals() 메서드
+
+기본 equals() 메서드
+
+public boolean equals(Object obj) {
+        return (this == obj);
+    }
+
+
+이 구문에서 Object를 사용하는 이유는 Object가 다형성으로 인해, 모든 범주를 포함하고 있기 때문이고(최상위 클래스),
+모든 자료형에 대응하기 위해서 사용한다.
+
+
+String 클래스에서의 재정의
+
+public boolean equals(Object anObject) {
+        if (this == anObject) {
+            return true;
+        }
+        return (anObject instanceof String aString)
+                && (!COMPACT_STRINGS || this.coder == aString.coder)
+                && StringLatin1.equals(value, aString.value);
+    }
+
+String에서는 동등성 비교를 위해 equals 메서드를 재정의한다.
+
+
+
+
+
+기존 클래스(Student)에서의 재정의
+
+@Override
+    public boolean equals(Object obj) { //Object obj = new Student()
+        
+        if(obj instanceof Student){
+            Student s = (Student) obj;
+            if(s.id == id && s.name.equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+마우스 우클릭 -> 제너레이트 -> 오버라이딩 메서드 -> equals
+
+
+비교
+		동일성(== -> 주소, 물리적 동일성)
+			(Object::equals)
+
+		동등성(값이 같음)
+			Object::equals를 재정의해서 동등성 비교 많이 사용
+			Object::hashCode()도 재정의하여 같은 값이면 같은 값(주소)이 나오게 한다.
+
+	//중복을 체크하는 기준으로 만들기 위해 equals와 hashCode를 재정의한다.
+		집합 자료 구조에서 주소값과 값을 모두 비교하기 때문에, 모두 재정의해줄 필요가 있다.
+		같은 값이면 같은 주소값을 할당받게 하고, 같은 주소값이면 같은 값을 할당받게 해 줘야 한다.
+
+
+전제 :  	private int id;
+    	private String name;
+
+    	public Student(int id, String name){
+        		this.id = id;
+        		this.name = name;
+    	}
+
+@Override
+    public int hashCode() {
+        return Objects.hash(id,name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof(출처 비교) Student){
+            Student s = (Student)(형변환)obj;
+            if(id == s.id && name.equals(s.name)){
+                return true;
+            }
+        }
+
+
+		참고) 집합 자료(Set) : 중복이 없는 자료
+
+
+3. hashCode() 메서드
+	-객체의 주소
+
+	java.util.Objects : 객체를 다루는데 편리한 유틸 기능
+		hash -> 해시코드 생성
+static int hash(Object... values) -> 여기서 점 3개(...)는 가변 매개변수를 의미한다.
+	입력하는 대로 값이 유동적으로 들어간다.
+
+
+public static void main(String[] args) {
+        add(10,20,30,40,50);
+        add(11,22,33);
+    }
+
+    public static int add(Integer... nums){
+
+        System.out.println(Arrays.toString(nums));
+
+        return 0;
+    }
+
+결과값
+[10, 20, 30, 40, 50]
+[11, 22, 33]
+
+
+public static void main(String[] args) {
+        int total1 = add(10,20,30,40,50);
+        int total2 = add(11,22,33);
+        System.out.println(total1);
+        System.out.println(total2);
+
+
+    }
+
+    public static int add(Integer... nums){
+        int total = 0;
+        for(int num : nums){
+            total += num;
+        }
+
+        return total;
+    }
+
+결과값 150
+	66
+
+
+	java.util.Arrays : 배열을 다루는 편리한 유틸 기능
+	java.util.Collections : 컬렉션을 다루는데 편리한 유틸 기능
+
+
+
+4. Class getClass();
+
+클래스 정보가 담긴 객체
+
+클래스 로더가 클래스 내부에 코드만 담긴 정보를 정리해서 클래스 객체를 만든다
+
+Class 클래스 객체 -> 클래스 로더 -> 클래스 -> 자동 생성
+	- 모든 클래스의 정적 변수 class
+	- getClass();
+
+	Class class = 클래스의 정보, 모든 클래스에 존재
+
+	Class<Student> cls = Student.class;
+
+        //Student s1 = new Student(1000, "이이름");
+        //Class cls2 = s1.getClass();
+
+        Field[] fields = cls.getFields();
+        for(Field field : fields){
+            System.out.println(field);
+        } // 배열을 이용해서 멤버변수 추출
+        Constructor[] cons = cls.getConstructors();
+        for (Constructor con : cons) {
+            System.out.println(con);
+        } //배열을 이용해서 생성자 추출
+
+
+String 클래스
+
+public final class String
+
+1. String을 선언하는 두 가지 방법
+String str = "abc";
+객체 이름이 달라도 값이 같으면 주소값도 같게 나온다.
+리터럴 상수. (데이터 영역)
+
+리터럴 상수 = 재료가 될 수 있는 값
+
+String str = new String("abc");
+객체 이름이 다르면 주소값도 다르게 나온다.
+(힙 메모리 영역)
+
+
+2. String 클래스의 final char[] 변수
+(JDK12 이후 byte[] 배열로 변경)
+
+문자열은 만들때마다 새 객체를 생성한다. (String 자체가 final이기 때문에 변경 불가이기 때문)
+(비효율적)
+
+문자열은 한번 만 들면 불변한다.
+기존 문자열에 변경을 가하게 되면 그 문자열을 파기하고 새롭게 만든다.(새 주소 할당)
+
+
+
+3. StringBuffer와 StringBuilder 클래스 활용하기
+String의 문제점을 해결하기 위해서 나온 클래스
+
+공간을 미리 정해놓고 만들 수 있는 클래스
+메모리 낭비가 적다.
+값을 넣지 않으면 16char.
+
+-
+StringBuffer sb = new StringBuffer();
+byte[] value = new byte[16]; //버퍼
+
+StringBuffer sb = new StringBuffer(100);
+byte[] value = new byte[100]; //버퍼
+
+sb.append("abc");
+StringBuffer는 append로 변수를 넣는다.
+
+String str = sb.toString()
+
+메서드 체인
+StringBuffer sb = new StringBuffer(100);
+ sb.append("abc").append("def").append("ghi");
+abc 담긴 sb, sb.append("def")
+	abcdef 담긴 sb, sb.append("ghi")
+객체의 반환값이 그 객체로 동일하므로, 그 객체 안에 있는 메서드를 사용할수 있다.
+메서드 안에 메서드를 사용하고 그 메서드 안의 메서드를 사용하고....
+

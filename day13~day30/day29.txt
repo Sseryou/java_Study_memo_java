@@ -1,0 +1,104 @@
+IOStream
+
+입출력(I/O)
+
+I/O -> 		Input / Output
+	데이터 입력	데이터 출력
+
+java.io 패키지
+
+1. 스트림(stream)
+- 데이터의 이동 경로
+- 입력 스트림
+- 출력 스트림
+
+- java.util.stream과는 전혀 다른 개념이다.
+
+
+바이트기반 스트림
+1.InputStream (입력스트림)
+	기반 스트림
+		- 직접 데이터에 접근하는 스트림
+		- FileInputStream : 파일 기반
+		- ByteArrayInputStream : 메모리 기반
+
+		-int read()
+			- 1바이트씩 이동하면서 읽기
+			- 다 읽고 나면 -1값을 반환
+			- ussigned byte(양수) : 0 ~ 255, -1
+
+		-int available
+			-남아있는 바이트 체크
+
+	보조 스트림
+		- 생성자 매개변수 - InputStream
+		- 직접 데이터 접근 X
+		- 기반 스트림 또는 다른 보조 스트림에 추가 기능을 제공
+
+		BufferedInputStream
+			: 버퍼(기본값 8kb)
+
+		FilterInputStream -> 입력 스트림 -> 보조 스트림
+
+		DataInputStream - DataInput인터페이스
+		-기본형 자료를 처리할 수 있는 편의 메서드
+
+		ObjectInputStream - 저장된 객체(직렬화된)를 원 객체로 읽어오는 기능
+
+	
+
+2.OutputStream (출력스트림)
+	기반 스트림
+		-데이터에 직접 접근하는 스트림
+		- FileOutputStream : 파일
+		- ByteArrayOutputStream : 메모리
+
+		- flush() = 버퍼를 싹 비운다.
+		- close() = 버퍼를 비우고 스트림을 닫는다.
+
+	보조 스트림(출력 스트림 + 추가 기능)
+		BufferedOutputStream : 기본값 : 8kb 버퍼
+		DataOutputStream = DataOutput 인터페이스
+			-기본자료형으로 처리할 수 있는 편의 메서드
+		
+		ObjectOutputStream : 객체를 파일로 저장 할 수 있는 기능
+
+
+
+문자기반 스트림 (2바이트, 3바이트 단위)
+
+-입력 스트림 (Reader)
+1. Reader
+	기반스트림
+		- 데이터에 직접 접근하는 스트림
+		- FileReader
+		- CharArrayReader
+		- StringReader
+
+	보조스트림
+		- 생성자 매개변수 Reader
+		- 데이터에 직접 접근 X
+		- 기반 스트림 또는 다른 스트림에 보조기능, 추가기능
+
+-출력 스트림(Writer)
+2. Writer (문자기반 출력 스트림 - 2, 3 bytes)
+
+	기반스트림
+		-직접 데이터에 접근하는 스트림
+		- FileWriter
+		- CharArrayWriter
+		- StringWriter
+		- PrintWriter
+		
+		참고)
+		-PrintStream (문자기반 스트림)
+		
+	
+	보조스트림
+		- 생성자 매개변수 Writer
+
+표준입출력과 File
+1.표준입출력
+1)System.in
+
+2)System.out

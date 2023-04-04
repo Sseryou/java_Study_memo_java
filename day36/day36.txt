@@ -1,0 +1,221 @@
+<%@ page contentType="text/html; charset=utf-8"%>
+기본 서버에서의 인코딩은 영문 기준이라 한글이 깨진다.
+요청 헤더에, 이 항목을 포함시켜야 html, 인코딩은 utf-8로 출력해달라는 의미를 전달할 수 있다.
+요청 헤더보단, 응답 헤더에 가깝다.
+요청 데이터 -> 바디 데이터
+
+웹, 요청, 응답
+
+
+JSTL
+의존성 항목에 JSTL을 추가해야 한다.
+jstl 1.2 메이븐 리포지토리에서 찾아서 추가
+
+그 다음 webapp폴더에 jstl을 추가한다.
+
+
+JSTL
+<%@ taglib
+		prefix="c"
+		uri="http://java.sun.com/jsp/jstl/core"%>
+	
+prefix : 무언가를 대체하기 위한 문자
+현재는 uri를 대체하고 있다.
+내부에 prefix를 써 넣어주면 된다.(관례적 c)
+	
+1. <c:set>
+	-EL식 변수로 추가
+	-scope
+		- page : page Context 속성(기본값)
+		- request 
+		- session
+		- application
+2. <c:remove>
+	-> 속성값에서 제거
+	-> 적용 범위를 설정하지 않으면 설정된 속성명의 모든 속성의 값을 제거
+	- scope로 범위 설정 -> 특정 범위의 속성만 제거 가능
+	
+3. <c:if>
+	- 조건문
+	- test = "${조건식}"
+	<c:if test="${num2 > num1}">
+    num2가 더 큽니다. //조건이 참일때만 출력되는 부분
+	</c:if>
+	잘 사용되지 않고, 대신 삼항연산자를 쓴다.
+	${num2 > num1 ? "num2가 더 큽니다." : "num1이 num2보다 크거나 같다"}
+	
+4. 다중 조건문
+<c:choose> - 조건문이 들어갈 자리
+<c:when> 
+<c:otherwise>
+
+<c:set var="age" value="18" />
+<c:choose>
+    <c:when test="${age < 8}">
+        유치원생!
+    </c:when>
+    <c:when test="${age < 14}">
+            초등학생!
+    </c:when>
+    <c:when test="${age < 17}">
+            중학생!
+    </c:when>
+    <c:when test="${age < 20}">
+            고등학생!
+    </c:when>
+    <c:otherwise>
+        성인!
+    </c:otherwise>
+</c:choose>
+
+5. <c:forEach>
+	- 반복문
+	- begin : 시작번호
+	- end : 종료번호
+	- step : 증감단위(기본값 1)
+	- var : begin, end -> 현재 수치
+	- items : EL식 변수
+				- 배열
+				- 컬렉션 (Collection - List, Set)
+				- Iterator
+				- Enumeration
+				+ var : 반복하는 각각의 요소
+	
+	-varStatus
+		: 반복에 대한 상태값
+			index : 0부터 시작하는 반복 횟수
+			count : 1부터 시작하는 반복 횟수
+			first : 첫번째 반복인지 체크
+			last : 마지막 반복인지 체크
+			current : 현재 반복되는 요소
+
+6. <c:redirect>
+	HttpServletResponse
+		response
+			.sendRedirect(주소)
+		응답 헤더
+			Location
+			
+	-url : 주소		
+7. <c:out ...>
+	출력 -> HTML escape : HTML 태그를 문자열로 인식
+		(escape  처리)
+	value
+	escapeXml : 기본값 true : HTML 태그를 escape 처리(문자열 인식)
+				:false -> HTML 태그를 인식
+		
+8. <c:url ...>
+	- 컨텍스트 패스
+	- var : 출력 결과물 -> EL 변수에 담아준다
+	
+9. <c:import>
+		-<jsp:include page="페이지" /> : 버퍼추가
+		
+		차이점
+			- url="주소"
+			- 액션 태그인 include는 현재 서버의 자원만 가능
+				jsp, 서블릿, html, 텍스트
+				
+			- import는 현재 서버 자원 + 외부 서버 자원
+			
+		var : 출력 결과물 -> EL 변수에 담아준다
+		
+포매팅(fmt) 라이브러리
+	-형식화 & 국제와, 지역화
+	
+	여긴 prefix가 fmt로 형식화 되어있다.
+	<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+1. fmt:formatDate
+	- Date, SimpleDataFormat
+	- 지금은?
+			java.time.*
+			java.time.format
+				DateTimeFormatter
+				
+				
+	- type
+		- date : 날짜만 표기 (기본값)
+		- time : 시간만 표기
+		- both : 날짜 + 시간
+		
+	- dateStyle
+	- timeStyle
+	
+		short|medium|long|full
+		
+	- pattern : 날짜 형식
+		
+	
+2. fmt:formatNumber
+	- 숫자 형식화
+	- java.text 패키지
+		- DecialFormet
+		
+	- value
+	- groupingUsed : true -> 숫자 세자리 마다 , 를 찍는다. (기본값)
+						: false -> 안찍는다.
+						
+						
+	- pattern :
+		#
+		0
+		
+	- type
+		: currency : 통화
+		: percent : %
+		
+		
+3. fmt:setLocale
+	Locale -> 지역화
+	java.util.Locale -> 국가, 언어
+	
+	- value
+		언어코드_국가코드(ko_kr)
+		언어코드(ko)
+
+4. fmt:timeZone과 fmt:setTimeZone
+	
+	fmt:timeZone -> 적용되는 날짜를 감싸는 형태
+
+
+
+5. fmt:setBundle과 fmt:bundle
+
+	<fmt:message />
+
+정적인 자원들은 resource에서 관리한다.
+또는, WEB-INF에 classes 폴더를 만들고, 그 안에 messages 폴더를 만들고,
+그 안에 properties 파일을 만드는 방식으로도 관리를 할 수 있다.
+
+properties : 설정, 메세지(다국어)
+키=값
+키=값
+
+# -> 주석
+
+병렬 리소스 방식
+브라우저의 Locale을 받아와, 자동으로 표시할 정보를 바꿀 수 있다!
+commons_ko.properties -> 한국어
+commons_en.properties -> 영어
+
+java.text 패키지
+MessageFormat
+
+java.util 패키지
+ResourceBundle
+
+- 치환 기능
+
+
+6. fmt:requestEncoding
+	-> request.setCharacterEncoding(...)
+
+
+함수(functions) 라이브러리
+주로 문자열을 처리
+java.lang.String 클래스에 속하는 메서드들과 비슷한 기능 제공
+
+
+
+

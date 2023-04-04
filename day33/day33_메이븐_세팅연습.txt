@@ -1,0 +1,56 @@
+maven project를 만든다.
+
+
+
+src\main에 java 만들기
+src에 test 만들고 그 안에
+
+xml 위에 들어가는 태그를 복사-붙여넣기 해야한다.
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                       http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+
+
+doGet을 오버라이딩
+
+//스트림을 열어서 출력해주는 과정
+PrintWriter out = resp.getWriter();
+        out.println("Hello!!!");
+
+
+tomcat 설정시 Deployment directory는 만들어진 프로젝트 내부의 webapp경로로 설정한다.
+Context path는 그 프로젝트 경로로 설정한다.  EX)/day04 (day04)프로젝트인 경우
+
+
+
+
+web.xml
+
+
+<servlet-name>helloServlet</servlet-name>(특수문자는 사용 불가능하다.)
+
+
+<servlet>
+        <servlet-name>helloServlet</servlet-name>
+        <servlet-class>servlets.HelloServlet</servlet-class> //현재 doGet으로 만들었으므로, Get방식의 요청 들어오면 클래스로 연결
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>helloServlet</servlet-name>
+        <url-mapping>/hello</url-mapping>  ///hello 요청이 들어왔을 때 이름에 해당하는 서블릿 이름 ->클래스를 찾는다.
+    </servlet-mapping> //사용자가 특정한 내용을 찾을때
+
+
+
+protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        PrintWriter out = resp.getWriter();
+        out.println("Hello!!!");
+    }
+이 메서드는 GET 요청과 응답을 구현한다.
+
+
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doPost(req, resp);
+    }
+이 메서드는 POST 요청과 응답을 구현한다.
+요청 바디
+

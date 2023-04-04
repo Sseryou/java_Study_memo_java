@@ -1,0 +1,363 @@
+평가안내
+4/3 - 2 ~ 4 교시
+
+개발환경 구축
+
+Maven 다운로드
+Apache Maven 검색해서 페이지 들어가기 -> 우측상단 다운로드에서 바이너리 파일로 다운로드
+
+압축 푼 후 apache-maven 내부의 bin폴더 들어가서 경로 복사
+
+C:\Users\Administrator\Desktop\성민수\apache-maven-3.9.1\bin
+
+시작 버튼 누르고 시스템 환경 변수 입력 -> 환경 변수 클릭 -> 어느 쪽이든 Path 선택 -> 편집 -> 새로 만들기 -> 경로 복사 붙여넣기 -> 확인하면 끝
+
+
+C:\Program Files\Java 폴더를 들어가서 jdk 버전을 확인한다.
+
+jdk-11인경우
+C:\Program Files\Java\jdk-11
+환경변수 들어가서 환경변수 -> JAVA_HOME -> 편집, 없으면 새로 만들기 -> 변수값은 jdk 경로, 변수이름은 JAVA_HOME -> 확인하면 끝
+
+
+cmd -> mvn -v 입력 -> 버전 3.9.0 나오면 설치 성공.
+
+
+
+1. maven 설치 및 설정
+	- 프로젝트 의존성 + 빌드 툴(배포, 테스트, 프로젝트 생성)
+
+
+인텔리j -> 새 프로젝트 -> Maven Archetype 생성 -> Archetyp을 org.apache.maven.archetypes:maven-archetype-webapp으로 설정
+-> advanced Setting -> 그룹아이디 변경(도메인 형식 , org.xxx형식으로 바꾸기) -> 경로 확인 후 확인
+C:\Users\Administrator\.m2\repository\junit\junit에 설치됨.
+
+인텔리j 파일 -> 세팅 -> 플러그인 -> tomcat 검색 -> 인스툴 -> run -> Edit Configuration 클릭 -> add new -> smart tomcat
+-> 이름 tomcat9 -> tomcat server 클릭 후 경로를 tomcat 깔았던 경로로 지정. ok를 누르면 오른쪽 위 실행이 톰캣으로 바뀜.
+server port를 3000으로 교체
+
+src -> main -> webapp -> index.jsp 파일 내부에 데이터가 있음
+
+
+
+war : 웹 배포파일
+jar :  
+
+localhost -> 웹서버에서 직접 접근
+127.0.0.1 
+3000 - 포트 (데이터가 이동하는 통로)
+
+주소:포트번호
+
+http - 80 / https - 443
+
+
+
+
+
+
+
+2. smart tomcat 설치 및 톰캣 연동
+
+tomcat9 다운로드 -> Core 64-bit 윈도우 버전 다운 ->압축풀기
+
+tomcat9 documentation 검색 -> Reference부분 확인 -> Servlet, JSP, EL부분의 Javadoc 확인 및 북마크화
+
+이름이 나뉘어진 이유 : 라이센스 분쟁
+javaee8
+javax.
+
+jakarta9,10
+jakarta.
+
+
+3. maven 사용방법 익히기
+mvn
+
+프로젝트 생성
+mvn archetype:generate
+
+배포 파일 생성 - war, jar
+mvn package
+->mvn clean : 기존 컴파일된 파일을 삭제 -> 패키징
+-> 컴파일 -> 테스트 -> 배포파일 생성
+
+테스트 수행
+mvn test
+
+컴파일
+mvn compile -> 빌드(클래스 파일 다시 생성)
+
+컴파일 파일 삭제
+mvn clean
+
+
+gradle 빌드를 도와준다
+
+
+설치된 의존 라이브러리(공유) //Maven은 라이브러리를 알아서 설치 해 준다.
+사용자/.m2/repository
+
+mvnrepository -> Junit 검색
+원래는 이걸 다 받아주어야 하지만 메이븐이 다 해놓았다.
+
+
+C:\Users\Administrator>cd day01
+C:\Users\Administrator\day01>dir/w
+
+C:\Users\Administrator\day01>mvn compile
+타겟이 된 폴더에 컴파일
+
+
+C:\Users\Administrator\day01\target\classes\org\koreait에 컴파일된 파일 들어있음
+mvn clean
+
+mvn package
+
+mvn test
+
+
+
+
+cmd에서 입력
+
+mvn archetype:generate
+그 다음 엔터
+그러면 어떤 방식으로 저장할 것인지가 나온다. 기본값 8
+groupid는 아까 했던 그룹아이디 입력
+artifactId는 그룹아이디 밑에 있던 이름 입력
+나머지는 엔터
+
+이러면 C:\Users\Administrator\day01폴더에 저장이 된다.
+
+
+C:\Users\Administrator\day01\src\main\java\org\koreait(자바 파일 저장되는 경로)
+C:\Users\Administrator\day01\src\test\java\org\koreait(테스트 파일 저장 경로)
+
+
+-<properties> //자바 버전 관리 영역
+
+<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+<maven.compiler.source>1.7</maven.compiler.source>
+
+<maven.compiler.target>1.7</maven.compiler.target>
+
+</properties>
+
+
+
+<maven.compiler.source>19</maven.compiler.source> //소스를 컴파일할 때 버전 . 자기 자바 버전으로 맞춘다
+<maven.compiler.target>19</maven.compiler.target> //배포파일 만들 때 쓸 자바 버전.
+
+
+-<dependencies>// 의존성 영역
+
+
+-<dependency>
+
+<groupId>junit</groupId>
+
+<artifactId>junit</artifactId>
+
+<version>4.11</version>
+
+<scope>test</scope>
+
+</dependency>
+
+</dependencies>
+
+
+
+4. lombok 설치 및 설정
+
+인텔리j 파일 -> 세팅 -> 플러그인 인스툴드에 lombok 확인
+
+mvn리포지토리 ->lombok검색 -> project lombok 클릭 -> 1.18.26
+dependency부분 복사 ->pom 붙여넣기 -> 우상단 maven 클릭 -> 새로고침 버튼 클릭 -> 좌측 라이브러리 확인
+-> lombok 라이브러리가 제대로 있는지 확인
+
+
+	@Getter
+	@Setter
+	@ToString 
+	//서로 참조하기 때문에 무한반복이 일어날 수 있음
+ 
+	@Builder : 빌더 패턴 자동 생성
+		->기본 생성자 : private
+		
+	@AllArgsConstructor : 모든 멤버 변수 초기화 생성자
+	@NoArgsConstructor : 기본 생성자
+	@RequiredArgsConstructor : 상수로 정의된 멤버변수, 값이 없는 경우
+		private final 자료형 변수명; //이 형태의 생성자 매개변수만 추가하게 해 준다. (final이 붙은 것들)
+
+	@NonNull = Null값이면 오류를 뱉는다. (필수로 값을 채워야 하게 바꿈)
+
+
+
+@Builder를 사용하게 되면
+
+Student s1 = Student.builder()
+                .id(1)
+                .name("이름1")
+                .subject("과목1")
+                .build();
+메서드 체인 방식으로 객체를 쉽게 만들수 있게 해준다.
+
+
+@AllArgsConstructor모든 매개변수의 생성자를 추가
+ Student s1 = new Student(1, "이름1","과목1"); //기본 생성자에 추가하지 않았음에도 불구하고 생성자를 추가해야 한다.
+ System.out.println(s1);
+
+
+
+
+
+
+src 내부 main에 java 폴더 생성 (인텔리 j)
+
+
+
+이제 롬복이 활성화 되어 있으므로,
+
+@Getter, @Setter, @ToString을 이용해서 getter/setter를 만드는 과정을 생략 할 수 있다.
+객체를 만들 때 평소처럼 getter setter를 이용하면 된다.
+
+
+컴파일을 하면 오류가 발생한다. (자바 버전 불일치할 경우)
+
+pom에 들어가서
+
+<properties>
+          <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+          <maven.compiler.source>19</maven.compiler.source>
+          <maven.compiler.source>19</maven.compiler.source>
+  </properties>
+항목을 추가한다.
+
+target 폴더를 지우고 재실행해본다.
+
+webapp 디렉토리가 없으면 추가한다
+webapp 내부에 WEB-INF가 없으면 추가한다
+WEB-INF 내부에 lib는 생성하든 말든 하면된다. (Maven에서 자동 관리)
+
+webapp에 index.jsp가 있는지 확인한다.
+
+
+
+TDD
+단위테스트 (unit test) (테스트는 시험에 출제)
+강의 프로그래밍 언어 활용 -> TDD -> junit5 -> 기초...
+
+mvn 리포지토리에 JUnit Jupiter API 검색 -> JUnit Jupiter API ->
+5.9.2버전 클릭 -> dependency 복사 -> pom.xml의 의존성항목에 붙여넣기
+
+mvn 리포지토리에 JUnit Jupiter (Aggregator) 찾아서 누르기, 5.9.2버전
+이것도 pom에 복붙 , 오른쪽위 maven 누르고 새로고침
+
+-> 익스터널 라이브러리스 확인
+
+한 라이브러리에서 의존한게 있으면 의존한 라이브러리도 maven이 자동으로 추가한다.
+맨 마지막에 build가 없으면 build추가
+
+<pluginManagement> 추가
+내부에 <plugins> 추가
+그 내부에 <plugin> 추가
+
+
+mvn 리포지토리에 Maven Surefire 검색
+Maven Surefire Plugin 클릭
+3.0.0버전 클릭
+
+아티팩트랑 버전만 복사
+
+ <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.0.0</version>
+
+<plugin>내부에 복사 및 붙여넣기
+
+
+maven surefire 백그라운드 테스트
+
+
+
+src에 test 생성
+test에 java 생성 (병렬구조)
+java에 tests 패키지 생성
+tests에 Apptest1 클래스 생성
+
+public class Apptest1 {
+    @Test
+    public void test1(){
+        int result = 2 + 5;
+        assertEquals(result, 7);
+    }
+
+}
+
+@Test 애노테이션을 붙여줘야 한다.
+
+테스트 클래스가 여러개 있을 경우
+특정 테스트 클래스만 실행시키는 것이 가능하다.
+테스트 클래스 이름을 우클릭해 실행시키면된다.
+
+assertEquals(expected, actual) : 실제 값(actual)이 기대하는 값(expected)과 같은지 검사한다.
+assertNotEquals(expected, actual) : 실제 값(actual)이 기대하는 값(expected)과 다른지 검사한다.
+
+1. junit
+	assertEquals(expected, actual)
+	-> toString(), 값
+
+	assertSame (Object expected, Object actual)
+	-> 객체의 물리적 주소가 같은지 비교
+		(동일 객체 여부)
+
+	assertTrue(boolean condition)
+	-> 값이 true인지 검사한다.
+
+	assertNull(Object actual)
+	-> 값이 null인지 검사한다.
+
+
+assertThrows(Class<T> expectedType, Executable executable)
+	-> 어떤 실행 -> 예외발생하면 테스트 성공
+	클래스는 클래스의 정보를 담고 있다.
+	getClass
+
+
+예외를 발생시키는 과정이 성공해야만 테스트를 성공하게 한다.
+
+assertDoesNotThrow(Executable executable)
+executable를 실행한 결과로 예외가 발생하지 않아야 성공한다.
+
+alt + enter = 바로 임포트
+
+회원 가입
+	테스트 -> 기능(TDD) (테스트를 하면서 기능개발을 한다.)
+	쉬운 기능 -> 쉬운 테스트 -> 기능 추가 -> 테스트 -> 기능 추가...
+		테스트 실패시 테스트를 통과하기 위해 기능 추가...
+
+
+	1)쉬운 테스트 -> 복잡한 테스트
+	
+	@DisplayName("문구") -> 테스트 명칭
+
+	Service -> 기능
+
+예외를 만드려면 RuntimeException을 상속받아야 한다.
+
+public class MemberVaildationException extends RuntimeException{
+    public MemberVaildationException(String message){
+        super(message);
+    }
+}
+
+2. mockito
+
+행위테스트
+
+웹 기초
+
+
+
